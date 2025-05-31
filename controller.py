@@ -15,6 +15,12 @@ def run_async_task(coro_func):
     except Exception as e:
         printBox(f"[run_async_task error] {e}")
 
+async def run_spin_to_location(loc, label):
+    from press_logic import spin_to_location
+    printBox("run_spin_to_location")
+    await spin_to_location(loc, label)
+    
+
 async def run_spin_left():
     from press_logic import Spin
     await Spin.left()

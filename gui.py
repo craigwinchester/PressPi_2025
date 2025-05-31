@@ -17,10 +17,11 @@ from asyncio import new_event_loop, set_event_loop, run_coroutine_threadsafe
 from program_editor import open_program_editor
 from drum_position_editor import open_positions_editor
 from config import SERIAL_PORT, SERIAL_BAUDRATE, PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, MAX_PRESSURE
-from press_logic import Spin, Pressure
+from press_logic import Spin, Pressure, spin_to_location
 from hardware import cleanup_gpio
 from utils import set_text_box, set_root_window, printBox, set_control_buttons
-from controller import inflate_to_bar, connect_emergency_button, run_spin_left, run_spin_right, run_pressure_deflate, run_pressure_inflate, run_async_task
+from controller import inflate_to_bar, connect_emergency_button, run_spin_left, run_spin_right, run_pressure_deflate, run_pressure_inflate, run_async_task, run_spin_to_location
+from drum_position_editor import positions
 
 # --- ASYNCIO SETUP ---
 asyncio_loop = new_event_loop()
@@ -39,11 +40,12 @@ class pressProgram:
     def __init__(self, name, config): pass
     def start(self): pass
 
-programs = ["Program1", "Program2", "Program3"]
-topTime = 1
-drainTime = 2
-bottomTime = 3
-pressure_data = 0.0
+pressure_data = 0
+
+topTime = positions["drum_positions"]["fill_position_seconds"]
+drainTime = positions["drum_positions"]["drain_position_seconds"]
+bottomTime = positions["drum_positions"]["door_down_position_seconds"]
+cam_hold_time = positions.get("cam_hold_time", 1.0)
 
 ser = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=2)
 ser.baudrate = SERIAL_BAUDRATE
@@ -188,16 +190,34 @@ Button_right = tk.Button(root, text='Right->', height=2, width=16, bg="light sla
                          command=lambda: run_async_task(run_spin_right))
 Button_right.grid(row=2, column=0, padx=25, pady=10)
 
-Button_top = tk.Button(root, text='Top', height=2, width=16, bg="light slate gray",
-                       command=lambda: disable_then_run(lambda: spinToLocation(topTime), Button_top))
+Button_top = tk.Button(
+    root,
+    text='Top',
+    height=2,
+    width=16,
+    bg="light slate gray",
+    command=lambda: run_async_task(lambda: run_spin_to_location(topTime, "top"))
+)
 Button_top.grid(row=0, column=1, padx=25, pady=10)
 
-Button_drain = tk.Button(root, text='Drain', height=2, width=16, bg="light slate gray",
-                         command=lambda: disable_then_run(lambda: spinToLocation(drainTime), Button_drain))
+Button_drain = tk.Button(
+    root,
+    text='Drain',
+    height=2,
+    width=16,
+    bg="light slate gray",
+    command=lambda: run_async_task(lambda: run_spin_to_location(drainTime, "drain"))
+)
 Button_drain.grid(row=1, column=1, padx=25, pady=10)
 
-Button_bottom = tk.Button(root, text='Bottom', height=2, width=16, bg="light slate gray",
-                          command=lambda: disable_then_run(lambda: spinToLocation(bottomTime), Button_bottom))
+Button_bottom = tk.Button(
+    root,
+    text='Bottom',
+    height=2,
+    width=16,
+    bg="light slate gray",
+    command=lambda: run_async_task(lambda: run_spin_to_location(bottomTime, "bottom"))
+)
 Button_bottom.grid(row=2, column=1, padx=25, pady=10)
 
 Entry_bar = tk.Entry(root, width=4)

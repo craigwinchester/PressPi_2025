@@ -2,7 +2,9 @@
 
 import asyncio
 import RPi.GPIO as GPIO
+import threading
 from hardware import setup_gpio
+import hardware
 from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE
 from utils import printBox
 from controller import running_tasks
@@ -127,7 +129,7 @@ class Pressure:
     @staticmethod
     async def inflateToBar(target_bar, get_current_bar):
         global pressure_flag, emerg_flag
-        printBox(f"[controller] ✅ coroutine started: target = {target_bar}")
+        printBox(f"target = {target_bar}")
         
         task = asyncio.current_task()
         running_tasks.add(task)
@@ -161,3 +163,36 @@ class Pressure:
         elapsed_time = asyncio.get_event_loop().time() - start_time
         return elapsed_time
 
+
+
+async def spin_to_location(loc, label):
+    printBox(f"spin_to_location - {label}, time: {loc}")
+    global spinning_flag, pressure_flag, program_flag
+    
+
+    spinning_flag = 1
+    GPIO.output(PIN_SPIN_LEFT, GPIO.LOW)
+    printBox("Waiting for bump to start timing")
+
+    # Reset rotation count to 0 and wait for it to reach 1
+    hardware.rotation_count = 0
+    while hardware.rotation_count < 1:
+        #printBox(f"rotation count: {hardware.rotation_count}")
+        await asyncio.sleep(0.01)
+
+    printBox(f"Bump detected - spinning for {loc:.2f} seconds")
+
+    task = asyncio.current_task()
+    running_tasks.add(task)
+    try:
+        await asyncio.sleep(loc)
+    except asyncio.CancelledError:
+        printBox(f"spin_to_location ({label}) cancelled")
+    finally:
+        GPIO.output(PIN_SPIN_LEFT, GPIO.HIGH)
+        hardware.rotation_count = 0
+        spinning_flag = 0
+        running_tasks.discard(task)
+        printBox(f"Arrived at {label}")
+
+    

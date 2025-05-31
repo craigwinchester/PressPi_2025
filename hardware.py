@@ -11,12 +11,6 @@ rotation_count = 0
 # --- Bump Button Setup ---
 bump_button = None  # declared at module level
 
-# Rotation counter (was `count`)
-rotation_count = 0
-
-# --- Bump Button Setup ---
-bump_button = None  # module-level reference
-
 def setup_bump_button():
     global bump_button, rotation_count
 

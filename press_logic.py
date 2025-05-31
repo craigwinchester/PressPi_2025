@@ -124,40 +124,40 @@ class Pressure:
             running_tasks.discard(task)
             #printBox("Deflate task cleaned up")
 
-@staticmethod
-async def inflateToBar(target_bar, get_current_bar):
-    global pressure_flag, emerg_flag
-    printBox(f"[controller] ✅ coroutine started: target = {target_bar}")
-    
-    task = asyncio.current_task()
-    running_tasks.add(task)
-    pressure_flag = 1
-    start_time = asyncio.get_event_loop().time()
+    @staticmethod
+    async def inflateToBar(target_bar, get_current_bar):
+        global pressure_flag, emerg_flag
+        printBox(f"[controller] ✅ coroutine started: target = {target_bar}")
+        
+        task = asyncio.current_task()
+        running_tasks.add(task)
+        pressure_flag = 1
+        start_time = asyncio.get_event_loop().time()
 
-    try:
-        while True:
-            current_bar = get_current_bar()
+        try:
+            while True:
+                current_bar = get_current_bar()
 
-            if emerg_flag == 1 or task.cancelled():
-                printBox("Emergency detected. Cancelling inflation.")
-                break
+                if emerg_flag == 1 or task.cancelled():
+                    printBox("Emergency detected. Cancelling inflation.")
+                    break
 
-            if current_bar >= target_bar:
-                break
+                if current_bar >= target_bar:
+                    break
 
+                for pin in PIN_INFLATE:
+                    GPIO.output(pin, GPIO.LOW)
+                await asyncio.sleep(1)
+        finally:
             for pin in PIN_INFLATE:
-                GPIO.output(pin, GPIO.LOW)
-            await asyncio.sleep(1)
-    finally:
-        for pin in PIN_INFLATE:
-            GPIO.output(pin, GPIO.HIGH)
+                GPIO.output(pin, GPIO.HIGH)
 
-        pressure_flag = 0
-        running_tasks.discard(task)
+            pressure_flag = 0
+            running_tasks.discard(task)
 
-    if emerg_flag == 1 or task.cancelled():
-        return None
+        if emerg_flag == 1 or task.cancelled():
+            return None
 
-    elapsed_time = asyncio.get_event_loop().time() - start_time
-    return elapsed_time
+        elapsed_time = asyncio.get_event_loop().time() - start_time
+        return elapsed_time
 

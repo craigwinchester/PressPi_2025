@@ -170,23 +170,9 @@ def button_settobar():
             printBox(f"❌ BAR must be between 0.0 and {MAX_PRESSURE}")
             return
         printBox(f"▶️ Starting async inflate to {target} BAR")
-        run_async_task(inflate_to_bar(target, lambda: pressure_data))
+        run_async_task(lambda: inflate_to_bar(target, lambda: pressure_data))
     except ValueError:
         printBox("❌ Invalid BAR entry.")
-
-async def async_inflate_to_bar(target):
-    set_pressure_controls_enabled(False, Button_setToBar)
-    printBox("gui.py LINE 185")
-    try:
-        printBox("LINE 187")
-        elapsed = await inflate_to_bar(target, lambda: pressure_data)
-        printBox("LINE 189")
-        if elapsed:
-            printBox(f"✅ Inflation complete in {elapsed:.1f} seconds")
-        else:
-            printBox("⚠️ Inflation interrupted or failed.")
-    finally:
-        set_pressure_controls_enabled(True)
 
 
 root = tk.Tk()

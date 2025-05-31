@@ -1,21 +1,19 @@
 # controller.py
 import asyncio
 import RPi.GPIO as GPIO
+import tkinter as tk
 from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE
 from utils import printBox, enable_all_buttons, disable_all_buttons
-import tkinter as tk
+from main import asyncio_loop
 
 # Track all running tasks that can be cancelled
 running_tasks = set()
 
-def run_async_task(coro):
+def run_async_task(coro_func):
     try:
-        loop = asyncio.get_running_loop()
-        task = loop.create_task(coro)
-        running_tasks.add(task)
-        task.add_done_callback(lambda t: running_tasks.discard(t))
-    except RuntimeError:
-        printBox("[run_async_task error] No running event loop")
+        asyncio.run_coroutine_threadsafe(coro_func(), asyncio_loop)
+    except Exception as e:
+        printBox(f"[run_async_task error] {e}")
 
 async def run_spin_left():
     from press_logic import Spin

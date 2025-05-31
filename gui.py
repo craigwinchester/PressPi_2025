@@ -195,11 +195,11 @@ root.geometry("1280x720")
 root.configure(bg="SteelBlue3")
 
 Button_left = tk.Button(root, text='<-Left', height=2, width=16, bg="light slate gray",
-                        command=lambda: run_async_task(run_spin_left()))
+                        command=lambda: run_async_task(run_spin_left))
 Button_left.grid(row=1, column=0, padx=25, pady=10)
 
 Button_right = tk.Button(root, text='Right->', height=2, width=16, bg="light slate gray",
-                         command=lambda: run_async_task(run_spin_right()))
+                         command=lambda: run_async_task(run_spin_right))
 Button_right.grid(row=2, column=0, padx=25, pady=10)
 
 Button_top = tk.Button(root, text='Top', height=2, width=16, bg="light slate gray",
@@ -227,7 +227,7 @@ Button_vacuum = tk.Button(
     height=2,
     width=16,
     bg="light slate gray",
-    command=lambda: run_async_task(run_pressure_deflate())  
+    command=lambda: run_async_task(run_pressure_deflate)  
 )
 Button_vacuum.grid(row=2, column=2, padx=25, pady=10)
 
@@ -237,7 +237,7 @@ Button_pressure = tk.Button(
     height=2,
     width=16,
     bg="light slate gray",
-    command=lambda: run_async_task(run_pressure_inflate())  
+    command=lambda: run_async_task(run_pressure_inflate)  
 )
 Button_pressure.grid(row=3, column=2, padx=25, pady=10)
 

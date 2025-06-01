@@ -18,3 +18,6 @@ SERIAL_BAUDRATE = 115200
 FULL_DEFLATE = 0.6 #set to 0.001 when ready! 0.6 is good for testing
 MAX_PRESSURE = 1.8
 
+# Spin Direction for spin_to_location & break-up rotations.
+# Left or Right?
+SPIN_ROTATION = PIN_SPIN_LEFT

@@ -46,6 +46,7 @@ def _process_print_queue():
             if _text_box:
                 _text_box.insert(tk.END, f"{msg}\n")
                 _text_box.see(tk.END)
+                _text_box.update()
     except Exception as e:
         print(f"[printBox error] {e}")
     finally:

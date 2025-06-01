@@ -139,27 +139,52 @@ class Pressure:
         try:
             while True:
                 current_bar = get_current_bar()
-
                 if emerg_flag == 1 or task.cancelled():
                     printBox("Emergency detected. Cancelling inflation.")
                     break
-
                 if current_bar >= target_bar:
                     break
-
                 for pin in PIN_INFLATE:
                     GPIO.output(pin, GPIO.LOW)
                 await asyncio.sleep(1)
         finally:
             for pin in PIN_INFLATE:
                 GPIO.output(pin, GPIO.HIGH)
-
             pressure_flag = 0
             running_tasks.discard(task)
-
         if emerg_flag == 1 or task.cancelled():
             return None
+        elapsed_time = asyncio.get_event_loop().time() - start_time
+        return elapsed_time
+    
+    @staticmethod
+    async def deflateToBar(target_bar, get_current_bar):
+        global pressure_flag, emerg_flag
+        printBox(f"Deflating to: {target_bar}")
+        
+        task = asyncio.current_task()
+        running_tasks.add(task)
+        pressure_flag = 1
+        start_time = asyncio.get_event_loop().time()
 
+        try:
+            while True:
+                current_bar = get_current_bar()
+                if emerg_flag == 1 or task.cancelled():
+                    printBox("Emergency detected. Cancelling inflation.")
+                    break
+                if current_bar <= target_bar:
+                    break
+                for pin in PIN_DEFLATE:
+                    GPIO.output(pin, GPIO.LOW)
+                await asyncio.sleep(1)
+        finally:
+            for pin in PIN_DEFLATE:
+                GPIO.output(pin, GPIO.HIGH)
+            pressure_flag = 0
+            running_tasks.discard(task)
+        if emerg_flag == 1 or task.cancelled():
+            return None
         elapsed_time = asyncio.get_event_loop().time() - start_time
         return elapsed_time
 
@@ -169,15 +194,14 @@ async def spin_to_location(loc, label):
     printBox(f"spin_to_location - {label}, time: {loc}")
     global spinning_flag, pressure_flag, program_flag
     
-
     spinning_flag = 1
     GPIO.output(PIN_SPIN_LEFT, GPIO.LOW)
     printBox("Waiting for bump to start timing")
 
     # Reset rotation count to 0 and wait for it to reach 1
-    hardware.rotation_count = 0
-    while hardware.rotation_count < 1:
-        #printBox(f"rotation count: {hardware.rotation_count}")
+    hardware.rotationCount = 0
+    while hardware.rotationCount < 1:
+        #printBox(f"rotation count: {hardware.rotationCount}")
         await asyncio.sleep(0.01)
 
     printBox(f"Bump detected - spinning for {loc:.2f} seconds")
@@ -190,7 +214,7 @@ async def spin_to_location(loc, label):
         printBox(f"spin_to_location ({label}) cancelled")
     finally:
         GPIO.output(PIN_SPIN_LEFT, GPIO.HIGH)
-        hardware.rotation_count = 0
+        hardware.rotationCount = 0
         spinning_flag = 0
         running_tasks.discard(task)
         printBox(f"Arrived at {label}")

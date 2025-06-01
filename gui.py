@@ -14,7 +14,7 @@ import atexit
 import RPi.GPIO as GPIO
 import asyncio
 from asyncio import new_event_loop, set_event_loop, run_coroutine_threadsafe
-from program_editor import open_program_editor
+from program_editor import open_program_editor, programs
 from drum_position_editor import open_positions_editor
 from config import SERIAL_PORT, SERIAL_BAUDRATE, PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, MAX_PRESSURE
 from press_logic import Spin, Pressure, spin_to_location
@@ -22,6 +22,7 @@ from hardware import cleanup_gpio
 from utils import set_text_box, set_root_window, printBox, set_control_buttons
 from controller import inflate_to_bar, connect_emergency_button, run_spin_left, run_spin_right, run_pressure_deflate, run_pressure_inflate, run_async_task, run_spin_to_location
 from drum_position_editor import positions
+from program import run_program
 
 # --- ASYNCIO SETUP ---
 asyncio_loop = new_event_loop()
@@ -253,17 +254,35 @@ Button_emergency = tk.Button(root, text='EMERGENCY STOP!', height=2, width=42,
 Button_emergency.grid(row=3, column=0, columnspan=2, padx=25, pady=10)
 connect_emergency_button(Button_emergency)
 
-Button_programOne = tk.Button(root, text='White', height=2, width=16, bg="light slate gray",
-                               command=lambda: disable_then_run(lambda: pressProgram("White", programs[0]).start(), Button_programOne))
-Button_programOne.grid(row=0, column=3, padx=25, pady=10)
+# Button for White Program
+Button_programOne = tk.Button()
+Button_programOne.grid(row=0, column=3, padx=(25, 25), pady=(10, 10))
+Button_programOne.configure(bg="light slate gray")
+Button_programOne.configure(
+    text='''White''',
+    height="2", width="16",
+    command=lambda: asyncio.run_coroutine_threadsafe(run_program("White", programs[1]), asyncio_loop)
+)
 
-Button_programTwo = tk.Button(root, text='Red', height=2, width=16, bg="light slate gray",
-                               command=lambda: disable_then_run(lambda: pressProgram("Red", programs[1]).start(), Button_programTwo))
-Button_programTwo.grid(row=1, column=3, padx=25, pady=10)
+# Button for Red Program
+Button_programTwo = tk.Button()
+Button_programTwo.grid(row=1, column=3, padx=(25, 25), pady=(10, 10))
+Button_programTwo.configure(bg="light slate gray")
+Button_programTwo.configure(
+    text='''Red''',
+    height="2", width="16",
+    command=lambda: asyncio.run_coroutine_threadsafe(run_program("Red", programs[1]), asyncio_loop)
+)
 
-Button_programThree = tk.Button(root, text='Custom', height=2, width=16, bg="light slate gray",
-                                 command=lambda: disable_then_run(lambda: pressProgram("Custom", programs[2]).start(), Button_programThree))
-Button_programThree.grid(row=2, column=3, padx=25, pady=10)
+# Button for Custom Program
+Button_programThree = tk.Button()
+Button_programThree.grid(row=2, column=3, padx=(25, 25), pady=(10, 10))
+Button_programThree.configure(bg="light slate gray")
+Button_programThree.configure(
+    text='''Custom''',
+    height="2", width="16",
+    command=lambda: asyncio.run_coroutine_threadsafe(run_program("Custom", programs[2]), asyncio_loop)
+)
 
 Button_editor = tk.Button(root, text='Editor', height=2, width=16, bg="light slate gray",
                            command=lambda: open_program_editor(root))

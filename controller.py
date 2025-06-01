@@ -3,7 +3,7 @@ import asyncio
 import RPi.GPIO as GPIO
 import tkinter as tk
 from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE
-from utils import printBox, enable_all_buttons, disable_all_buttons
+from utils import printBox
 from main import asyncio_loop
 
 # Track all running tasks that can be cancelled
@@ -50,6 +50,19 @@ async def inflate_to_bar(target_bar, get_current_bar):
     finally:
         running_tasks.discard(task)
 
+async def deflate_to_bar(target_bar, get_current_bar):
+    from press_logic import Pressure
+    task = asyncio.current_task()
+    running_tasks.add(task)
+    try:
+        elapsed = await Pressure.deflateToBar(target_bar, get_current_bar)
+        if elapsed is not None:
+            printBox(f"✅ Reached {target_bar:.2f} BAR in {elapsed:.2f} seconds")
+        else:
+            printBox("⚠️ Deflation was interrupted")
+    finally:
+        running_tasks.discard(task)
+
 def connect_emergency_button(button):
     import tkinter as tk
     from functools import partial
@@ -69,26 +82,7 @@ async def emergency_stop():
     cancel_all_tasks()
     shutdown_all_relays()
     printBox("⚡ All relays OFF. Async tasks cancelled.")
-    show_clear_emergency_popup()
-
-def show_clear_emergency_popup():
-    popup = tk.Toplevel()
-    popup.title("Clear Emergency")
-    popup.geometry("300x150")
-    popup.configure(bg="red")
-
-    label = tk.Label(popup, text="Emergency Active!", font=("Arial", 14), bg="red", fg="white")
-    label.pack(pady=10)
-
-    def clear_emergency():
-        enable_all_buttons()  # This function should re-enable all relevant buttons
-        popup.destroy()
-
-    clear_button = tk.Button(popup, text="Clear Emergency", command=clear_emergency, font=("Arial", 12), bg="white")
-    clear_button.pack(pady=10)
-
-    # Disable all relevant buttons in your GUI
-    disable_all_buttons()
+    tk.messagebox.showwarning(title = "!", message = "Clear Emergency")
 
 def cancel_all_tasks():
     for task in list(running_tasks):

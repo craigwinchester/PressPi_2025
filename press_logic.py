@@ -5,9 +5,11 @@ import RPi.GPIO as GPIO
 import threading
 from hardware import setup_gpio
 import hardware
-from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE
+from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SPIN_ROTATION
 from utils import printBox
 from controller import running_tasks
+import pressure
+import time
 
 # System flags
 spinning_flag = 0
@@ -138,7 +140,7 @@ class Pressure:
 
         try:
             while True:
-                current_bar = get_current_bar()
+                current_bar = pressure.pressure_data
                 if emerg_flag == 1 or task.cancelled():
                     printBox("Emergency detected. Cancelling inflation.")
                     break
@@ -169,7 +171,7 @@ class Pressure:
 
         try:
             while True:
-                current_bar = get_current_bar()
+                current_bar = pressure.pressure_data
                 if emerg_flag == 1 or task.cancelled():
                     printBox("Emergency detected. Cancelling inflation.")
                     break
@@ -195,7 +197,7 @@ async def spin_to_location(loc, label):
     global spinning_flag, pressure_flag, program_flag
     
     spinning_flag = 1
-    GPIO.output(PIN_SPIN_LEFT, GPIO.LOW)
+    GPIO.output(SPIN_ROTATION, GPIO.LOW)
     printBox("Waiting for bump to start timing")
 
     # Reset rotation count to 0 and wait for it to reach 1
@@ -213,10 +215,33 @@ async def spin_to_location(loc, label):
     except asyncio.CancelledError:
         printBox(f"spin_to_location ({label}) cancelled")
     finally:
-        GPIO.output(PIN_SPIN_LEFT, GPIO.HIGH)
+        GPIO.output(SPIN_ROTATION, GPIO.HIGH)
         hardware.rotationCount = 0
         spinning_flag = 0
         running_tasks.discard(task)
         printBox(f"Arrived at {label}")
 
-    
+async def hold_pressure(max_pressure, reset_pressure, pressure_time):
+    printBox(f"⏱ Holding pressure at {max_pressure:.2f} BAR for {pressure_time:.1f} sec (reset if < {reset_pressure:.2f})")
+    start_time = time.time()
+    try:
+        while time.time() - start_time < pressure_time:
+            current_bar = pressure.pressure_data
+            printBox(f"🔍 Current BAR: {current_bar:.2f}")
+            if current_bar < reset_pressure:
+                printBox(f"⚠️ Pressure dropped to {current_bar:.2f} — re-inflating to {max_pressure:.2f}")
+                await Pressure.inflateToBar(max_pressure, pressure.pressure_data)
+            await asyncio.sleep(0.5)
+        printBox("hold pressure time reached.")
+    except asyncio.CancelledError:
+        printBox("⛔ hold_pressure cancelled")   
+
+async def breakup_rotations(n):
+    hardware.rotationCount = 0
+    GPIO.output(SPIN_ROTATION, GPIO.LOW)
+    printBox(f"BREAKUP ROTATIONS x {n}")
+    while True:
+        if hardware.rotationCount >= n:
+            await asyncio.sleep(1)  # brief pause
+            GPIO.output(SPIN_ROTATION, GPIO.HIGH)
+            break

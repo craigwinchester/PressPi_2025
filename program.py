@@ -1,31 +1,20 @@
 import asyncio
 import RPi.GPIO as GPIO
 import time
-import hardware
 import tkinter as tk
 from program_editor import programs
 from controller import inflate_to_bar, deflate_to_bar, run_spin_to_location, run_async_task
-from press_logic import Spin, spin_to_location
-from config import SPIN_ROTATION
+from press_logic import Spin, spin_to_location, hold_pressure, breakup_rotations
+from config import SPIN_ROTATION, FULL_DEFLATE
 from gui import printBox
 #from button_control import set_program_buttons_enabled
 from drum_position_editor import positions
+import pressure
 
 topTime = positions["drum_positions"]["fill_position_seconds"]
 drainTime = positions["drum_positions"]["drain_position_seconds"]
 bottomTime = positions["drum_positions"]["door_down_position_seconds"]
 cam_hold_time = positions.get("cam_hold_time", 1.0)
-
-async def breakup_rotations(n):
-    hardware.rotation_count = 0
-    GPIO.output(SPIN_ROTATION, GPIO.LOW)
-    printBox(f"ðŸ” Rotating for {n} bumps...")
-
-    while hardware.rotation_count() < n:
-        await asyncio.sleep(0.1)
-
-    GPIO.output(SPIN_ROTATION, GPIO.HIGH)
-    await asyncio.sleep(1)  # brief pause
 
 async def run_program(name, program_data):
     #turn off all buttons except emergency here
@@ -40,8 +29,7 @@ async def run_program(name, program_data):
     
     #move to drain position
     await spin_to_location(drainTime, "drain")
-    
-    
+        
     for stage_len in range(len(program_data)):
         printBox(f"STAGE - {stage_len + 1}")
         for cycle_len in range(program_data[stage_len]["cycles"]):
@@ -51,10 +39,12 @@ async def run_program(name, program_data):
             pressure_time = program_data[stage_len]["pressureTime"]
             num_rotations = program_data[stage_len]["breakUpRotations"]
             #Inflate to max_pressure
+            await inflate_to_bar(max_pressure, pressure.pressure_data)
             #Hold at max_pressure for pressure_time. Repressurize if below reset_pressure
-            #need to create hold_pressure(max_pressure, reset_pressure, pressure_time)
+            await hold_pressure(max_pressure, reset_pressure, pressure_time)
             #deflate_to_pressure(zero) after pressure_time has elapsed
-            #breakup_rotations(num_rotations)
+            await deflate_to_bar(FULL_DEFLATE, pressure.pressure_data)
+            await breakup_rotations(num_rotations)
             printBox(f"Cycle {cycle_len + 1} finished")
         printBox(f"Stage {stage_len + 1} finished")
     printBox(f"Program {name} finished")

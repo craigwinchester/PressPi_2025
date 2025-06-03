@@ -15,7 +15,7 @@ SERIAL_PORT = "/dev/ttyUSB0"
 SERIAL_BAUDRATE = 115200
 
 # Pressure Settings
-FULL_DEFLATE = 0.6 #set to 0.001 when ready! 0.6 is good for testing
+FULL_DEFLATE = 0.001 #set to 0.001 when ready! 0.6 is good for testing
 MAX_PRESSURE = 1.8
 
 # Spin Direction for spin_to_location & break-up rotations.

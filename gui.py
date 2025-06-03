@@ -8,8 +8,8 @@ from matplotlib import style
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib import animation
 import threading
-import time
-import serial
+#import time
+#import serial
 import atexit
 import RPi.GPIO as GPIO
 import asyncio
@@ -18,11 +18,12 @@ from program_editor import open_program_editor, programs
 from drum_position_editor import open_positions_editor
 from config import SERIAL_PORT, SERIAL_BAUDRATE, PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, MAX_PRESSURE
 from press_logic import Spin, Pressure, spin_to_location
-from hardware import cleanup_gpio
+from hardware import cleanup_gpio, pressure_updater
 from utils import set_text_box, set_root_window, printBox, set_control_buttons
 from controller import inflate_to_bar, connect_emergency_button, run_spin_left, run_spin_right, run_pressure_deflate, run_pressure_inflate, run_async_task, run_spin_to_location
 from drum_position_editor import positions
 from program import run_program
+import pressure
 
 # --- ASYNCIO SETUP ---
 asyncio_loop = new_event_loop()
@@ -33,23 +34,18 @@ def start_async_loop():
 threading.Thread(target=start_async_loop, daemon=True).start()
 
 # Placeholder imports for actual functions and classes
-def open_position_editor(): pass
-def open_config_editor(): pass
-def spinToLocation(t): pass
+#def open_position_editor(): pass
+#def open_config_editor(): pass
+#def spinToLocation(t): pass
 
-class pressProgram:
-    def __init__(self, name, config): pass
-    def start(self): pass
-
-pressure_data = 0
+#class pressProgram:
+#    def __init__(self, name, config): pass
+#    def start(self): pass
 
 topTime = positions["drum_positions"]["fill_position_seconds"]
 drainTime = positions["drum_positions"]["drain_position_seconds"]
 bottomTime = positions["drum_positions"]["door_down_position_seconds"]
 cam_hold_time = positions.get("cam_hold_time", 1.0)
-
-ser = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=2)
-ser.baudrate = SERIAL_BAUDRATE
 
 pinList = [PIN_SPIN_LEFT, PIN_SPIN_RIGHT] + PIN_INFLATE + PIN_DEFLATE
 
@@ -67,15 +63,6 @@ def on_closing():
     root.destroy()
 
 atexit.register(shutdown_relays)
-
-def getCurrentBar():
-    try:
-        line = ser.readline()
-        decoded = line.decode('utf-8', errors='ignore').strip()
-        return float(decoded)
-    except Exception as e:
-        printBox(f"[getCurrentBar error] {e}")
-        return 0.0
 
 bar_gauge = None
 
@@ -152,16 +139,10 @@ def button_color_poll_loop():
     refresh_button_colors_from_gpio()
     root.after(300, button_color_poll_loop)
 
-def pressure_updater():
-    global pressure_data
-    while True:
-        pressure_data = getCurrentBar()
-        time.sleep(0.1)
-
 def update_gauge():
-    global pressure_data
+    #global pressure_data
     try:
-        bar_gauge.config(text=f"{pressure_data:.2f} BAR")
+        bar_gauge.config(text=f"{pressure.pressure_data:.2f} BAR")
     except Exception as e:
         printBox(f"[update_gauge error] {e}")
     root.after(250, update_gauge)
@@ -173,7 +154,7 @@ def button_settobar():
             printBox(f"❌ BAR must be between 0.0 and {MAX_PRESSURE}")
             return
         printBox(f"▶️ Starting async inflate to {target} BAR")
-        run_async_task(lambda: inflate_to_bar(target, lambda: pressure_data))
+        run_async_task(lambda: inflate_to_bar(target, lambda: pressure.pressure_data))
     except ValueError:
         printBox("❌ Invalid BAR entry.")
 
@@ -338,7 +319,7 @@ ax.set_ylim(y_range)
 line, = ax.plot(xs, ys)
 
 def animate(i):
-    ys.append(pressure_data)
+    ys.append(pressure.pressure_data)
     del ys[0]
     line.set_ydata(ys)
     return line,

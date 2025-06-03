@@ -1,9 +1,15 @@
 # hardware.py
 
 import RPi.GPIO as GPIO
-from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE
+import serial
+import time
+import pressure
+from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE
 from gpiozero import Button
 from drum_position_editor import positions  # for cam_hold_time 
+
+ser = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=2)
+ser.baudrate = SERIAL_BAUDRATE
 
 # Track bump count globally (or refactor into a state object)
 rotationCount = 0
@@ -52,3 +58,17 @@ def setup_gpio():
 def cleanup_gpio():
     GPIO.cleanup()
     print("[HARDWARE] GPIO cleanup complete")
+
+def getCurrentBar():
+    try:
+        line = ser.readline()
+        decoded = line.decode('utf-8', errors='ignore').strip()
+        return float(decoded)
+    except Exception as e:
+        print(f"[getCurrentBar error] {e}")
+        return 0.0
+
+def pressure_updater():
+    while True:
+        pressure.pressure_data = getCurrentBar()
+        time.sleep(0.1)

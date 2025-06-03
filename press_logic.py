@@ -2,7 +2,7 @@
 
 import asyncio
 import RPi.GPIO as GPIO
-import threading
+#import threading
 from hardware import setup_gpio
 import hardware
 from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SPIN_ROTATION
@@ -19,6 +19,7 @@ emerg_flag = 0
 
 setup_gpio()
 
+#-----SPIN CLASS-----#
 class Spin:
     async def left():
         task = asyncio.current_task()
@@ -68,7 +69,7 @@ class Spin:
             spinning_flag = 0
             running_tasks.discard(task)
 
-
+#-----PRESSURE CLASS-----#
 class Pressure:
     async def inflate():
         global spinning_flag, pressure_flag, program_flag
@@ -189,8 +190,6 @@ class Pressure:
             return None
         elapsed_time = asyncio.get_event_loop().time() - start_time
         return elapsed_time
-
-
 
 async def spin_to_location(loc, label):
     printBox(f"spin_to_location - {label}, time: {loc}")

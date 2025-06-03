@@ -7,7 +7,6 @@ from controller import inflate_to_bar, deflate_to_bar, run_spin_to_location, run
 from press_logic import Spin, spin_to_location, hold_pressure, breakup_rotations
 from config import SPIN_ROTATION, FULL_DEFLATE
 from gui import printBox
-#from button_control import set_program_buttons_enabled
 from drum_position_editor import positions
 import pressure
 
@@ -17,8 +16,6 @@ bottomTime = positions["drum_positions"]["door_down_position_seconds"]
 cam_hold_time = positions.get("cam_hold_time", 1.0)
 
 async def run_program(name, program_data):
-    #turn off all buttons except emergency here
-    #set_program_buttons_enabled(False)
     
     tk.messagebox.showwarning(title = "!", message = "Door Closed?")
     tk.messagebox.showwarning(title = "!", message = "Valve Closed?")
@@ -27,8 +24,7 @@ async def run_program(name, program_data):
     
     start_time = time.time()
     
-    #move to drain position
-    await spin_to_location(drainTime, "drain")
+    await spin_to_location(drainTime, "drain") 
         
     for stage_len in range(len(program_data)):
         printBox(f"STAGE - {stage_len + 1}")
@@ -38,20 +34,24 @@ async def run_program(name, program_data):
             reset_pressure = program_data[stage_len]["resetPressure"]
             pressure_time = program_data[stage_len]["pressureTime"]
             num_rotations = program_data[stage_len]["breakUpRotations"]
-            #Inflate to max_pressure
+               
             await inflate_to_bar(max_pressure, pressure.pressure_data)
-            #Hold at max_pressure for pressure_time. Repressurize if below reset_pressure
+            await asyncio.sleep(2) 
             await hold_pressure(max_pressure, reset_pressure, pressure_time)
-            #deflate_to_pressure(zero) after pressure_time has elapsed
+            await asyncio.sleep(2) 
             await deflate_to_bar(FULL_DEFLATE, pressure.pressure_data)
+            await asyncio.sleep(2) 
             await breakup_rotations(num_rotations)
+           
             printBox(f"Cycle {cycle_len + 1} finished")
         printBox(f"Stage {stage_len + 1} finished")
-    printBox(f"Program {name} finished")
+    
+    await asyncio.sleep(2) 
     await run_spin_to_location(topTime, "top")
+    printBox(f"Program {name} finished")
+   
     total_time = time.time() - start_time
     printBox(f"Elapsed Time: {total_time}")
-    #set_program_buttons_enabled(True)
-         
+             
     return
    

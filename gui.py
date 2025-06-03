@@ -8,8 +8,6 @@ from matplotlib import style
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib import animation
 import threading
-#import time
-#import serial
 import atexit
 import RPi.GPIO as GPIO
 import asyncio
@@ -32,15 +30,6 @@ def start_async_loop():
     asyncio_loop.run_forever()
 
 threading.Thread(target=start_async_loop, daemon=True).start()
-
-# Placeholder imports for actual functions and classes
-#def open_position_editor(): pass
-#def open_config_editor(): pass
-#def spinToLocation(t): pass
-
-#class pressProgram:
-#    def __init__(self, name, config): pass
-#    def start(self): pass
 
 topTime = positions["drum_positions"]["fill_position_seconds"]
 drainTime = positions["drum_positions"]["drain_position_seconds"]
@@ -83,23 +72,6 @@ button_original_colors = {}
 
 emergency_active = False
 
-def set_pressure_controls_enabled(enabled, active_button=None):
-    global emergency_active
-    if emergency_active:
-        enabled = False
-    state = tk.NORMAL if enabled else tk.DISABLED
-    for btn in all_control_buttons:
-        if btn != Button_setToBar:
-            btn.config(state=state)
-        if not enabled:
-            button_original_colors[btn] = btn.cget("fg")
-            if btn != active_button:
-                btn.config(fg="gray")
-        else:
-            btn.config(fg="black")
-    if not enabled and active_button:
-        active_button.config(fg="red")
-
 def any_gpio_active():
     try:
         if GPIO.input(PIN_SPIN_LEFT) == GPIO.LOW: return True
@@ -127,9 +99,21 @@ def refresh_button_colors_from_gpio():
             elif active_any or emergency_active:
                 btn.config(fg="gray")
                 btn.config(state=tk.DISABLED)
+                Button_top.config(state=tk.DISABLED)
+                Button_drain.config(state=tk.DISABLED)
+                Button_bottom.config(state=tk.DISABLED)
+                Button_programOne.config(state=tk.DISABLED)
+                Button_programTwo.config(state=tk.DISABLED)
+                Button_programThree.config(state=tk.DISABLED)
             else:
                 btn.config(fg="black")
                 btn.config(state=tk.NORMAL)
+                Button_top.config(state=tk.NORMAL)
+                Button_drain.config(state=tk.NORMAL)
+                Button_bottom.config(state=tk.NORMAL)
+                Button_programOne.config(state=tk.NORMAL)
+                Button_programTwo.config(state=tk.NORMAL)
+                Button_programThree.config(state=tk.NORMAL)
         if Button_setToBar:
             Button_setToBar.config(state=tk.DISABLED if set_to_bar_disabled else tk.NORMAL)
     except Exception as e:
@@ -140,7 +124,6 @@ def button_color_poll_loop():
     root.after(300, button_color_poll_loop)
 
 def update_gauge():
-    #global pressure_data
     try:
         bar_gauge.config(text=f"{pressure.pressure_data:.2f} BAR")
     except Exception as e:
@@ -268,17 +251,6 @@ Button_programThree.configure(
 Button_editor = tk.Button(root, text='Editor', height=2, width=16, bg="light slate gray",
                            command=lambda: open_program_editor(root))
 Button_editor.grid(row=3, column=3, padx=25, pady=10)
-
-
-def disable_then_run(func, active_btn):
-    set_pressure_controls_enabled(False, active_btn)
-    threading.Thread(target=lambda: run_and_reenable(func), daemon=True).start()
-
-def run_and_reenable(func):
-    try:
-        func()
-    finally:
-        set_pressure_controls_enabled(True)
 
 bar_gauge = tk.Label(root,
                      text="0.00 BAR",

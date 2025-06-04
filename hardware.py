@@ -3,8 +3,9 @@
 import RPi.GPIO as GPIO
 import serial
 import time
+import json
 import pressure
-from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE
+from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER
 from gpiozero import Button
 from drum_position_editor import positions  # for cam_hold_time 
 
@@ -71,4 +72,14 @@ def getCurrentBar():
 def pressure_updater():
     while True:
         pressure.pressure_data = getCurrentBar()
+        if WEB_SERVER:
+            try:
+                with open("/tmp/pressure_log.json","w") as f:
+                    json.dump({"pressure": pressure.pressure_data}, f)
+            except Exception as e: 
+                print(f"Error writing pressure: {e}")
         time.sleep(0.1)
+
+def update_json_pressure_log(pressure):
+    with open("/tmp/pressure_log.json","w") as f:
+        json.dump({"pressure": pressure})

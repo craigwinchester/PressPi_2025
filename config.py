@@ -21,3 +21,6 @@ MAX_PRESSURE = 1.8
 # Spin Direction for spin_to_location & break-up rotations.
 # Left or Right?
 SPIN_ROTATION = PIN_SPIN_LEFT
+
+#WEB PAGE On or Off
+WEB_SERVER = False

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Wine Press 2025
+Comment=Launches the wine press controller
+Exec=/home/craig/Documents/CODE/Press_Pi_2025/start_PressPi2025.sh
+Icon=/home/craig/Documents/CODE/Press_Pi_2025/wine-press.ico
+Terminal=false
+Type=Application
+Categories=Utility;

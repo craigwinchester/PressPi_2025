@@ -9,11 +9,14 @@ from config import SPIN_ROTATION, FULL_DEFLATE
 from gui import printBox
 from drum_position_editor import positions
 import pressure
+from sms_alerts import load_contacts, send_sms, get_contact_by_name
 
 topTime = positions["drum_positions"]["fill_position_seconds"]
 drainTime = positions["drum_positions"]["drain_position_seconds"]
 bottomTime = positions["drum_positions"]["door_down_position_seconds"]
 cam_hold_time = positions.get("cam_hold_time", 1.0)
+
+contacts = load_contacts()
 
 async def run_program(name, program_data):
     
@@ -52,6 +55,10 @@ async def run_program(name, program_data):
    
     total_time = time.time() - start_time
     printBox(f"Elapsed Time: {total_time}")
+
+    #send SMS
+    contact = get_contact_by_name("Craig")
+    send_sms(contact, f"Press program completed. Elapsed time: {total_time}")
              
     return
    

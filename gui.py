@@ -21,8 +21,9 @@ from utils import set_text_box, set_root_window, printBox, set_control_buttons
 from controller import inflate_to_bar, connect_emergency_button, run_spin_left, run_spin_right, run_pressure_deflate, run_pressure_inflate, run_async_task, run_spin_to_location
 from drum_position_editor import positions
 from program import run_program
-import pressure
-
+import status
+from web_server import shutdown_flask
+ 
 # --- ASYNCIO SETUP ---
 asyncio_loop = new_event_loop()
 def start_async_loop():
@@ -52,6 +53,7 @@ def on_closing():
     root.destroy()
 
 atexit.register(shutdown_relays)
+atexit.register(shutdown_flask)
 
 bar_gauge = None
 
@@ -125,7 +127,7 @@ def button_color_poll_loop():
 
 def update_gauge():
     try:
-        bar_gauge.config(text=f"{pressure.pressure_data:.2f} BAR")
+        bar_gauge.config(text=f"{status.pressure_data:.2f} BAR")
     except Exception as e:
         printBox(f"[update_gauge error] {e}")
     root.after(250, update_gauge)
@@ -137,7 +139,7 @@ def button_settobar():
             printBox(f"❌ BAR must be between 0.0 and {MAX_PRESSURE}")
             return
         printBox(f"▶️ Starting async inflate to {target} BAR")
-        run_async_task(lambda: inflate_to_bar(target, lambda: pressure.pressure_data))
+        run_async_task(lambda: inflate_to_bar(target, lambda: status.pressure_data))
     except ValueError:
         printBox("❌ Invalid BAR entry.")
 
@@ -291,7 +293,7 @@ ax.set_ylim(y_range)
 line, = ax.plot(xs, ys)
 
 def animate(i):
-    ys.append(pressure.pressure_data)
+    ys.append(status.pressure_data)
     del ys[0]
     line.set_ydata(ys)
     return line,

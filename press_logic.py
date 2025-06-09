@@ -8,8 +8,9 @@ import hardware
 from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SPIN_ROTATION
 from utils import printBox
 from controller import running_tasks
-import pressure
+import status
 import time
+import status
 
 # System flags
 spinning_flag = 0
@@ -30,12 +31,14 @@ class Spin:
                 if GPIO.input(PIN_SPIN_RIGHT):
                     if GPIO.input(PIN_SPIN_LEFT):
                         printBox("Turning Left")
+                        status.current_action = "Turning Left"
                         GPIO.output(PIN_SPIN_LEFT, GPIO.LOW)
                         spinning_flag = 1
                         while not task.cancelled():  # Keep spinning until cancelled
                             await asyncio.sleep(0.1)
                     else:
                         printBox("Stop Turning Left")
+                        status.current_action = ""
                         GPIO.output(PIN_SPIN_LEFT, GPIO.HIGH)
                         spinning_flag = 0
             else:
@@ -54,12 +57,14 @@ class Spin:
                 if GPIO.input(PIN_SPIN_LEFT):
                     if GPIO.input(PIN_SPIN_RIGHT):
                         printBox("Turning Right")
+                        status.current_action = "Turning Right" 
                         GPIO.output(PIN_SPIN_RIGHT, GPIO.LOW)
                         spinning_flag = 1
                         while not task.cancelled():  # Keep spinning until cancelled
                             await asyncio.sleep(0.1)
                     else:
                         printBox("Stop Turning Right")
+                        status.current_action = ""
                         GPIO.output(PIN_SPIN_RIGHT, GPIO.HIGH)
                         spinning_flag = 0
             else:
@@ -80,6 +85,7 @@ class Pressure:
                 if all(GPIO.input(pin) for pin in PIN_INFLATE):
                     pressure_flag = 1
                     printBox("Pressure On")
+                    status.current_action = "Inflating" 
                     for pin in PIN_INFLATE:
                         GPIO.output(pin, GPIO.LOW)
                     for pin in PIN_DEFLATE:
@@ -89,6 +95,7 @@ class Pressure:
                 else:
                     pressure_flag = 0
                     printBox("Pressure Off")
+                    status.current_action = ""
                     for pin in PIN_INFLATE:
                         GPIO.output(pin, GPIO.HIGH)
             else:
@@ -109,6 +116,7 @@ class Pressure:
                 if all(GPIO.input(pin) for pin in PIN_DEFLATE):
                     pressure_flag = 2
                     printBox("Vacuum On")
+                    status.current_action = "Deflating"
                     for pin in PIN_INFLATE:
                         GPIO.output(pin, GPIO.HIGH)
                     for pin in PIN_DEFLATE:
@@ -118,6 +126,7 @@ class Pressure:
                 else:
                     pressure_flag = 0
                     printBox("Vacuum Off")
+                    status.current_action = ""
                     for pin in PIN_DEFLATE:
                         GPIO.output(pin, GPIO.HIGH)
             else:
@@ -141,7 +150,7 @@ class Pressure:
 
         try:
             while True:
-                current_bar = pressure.pressure_data
+                current_bar = status.pressure_data
                 if emerg_flag == 1 or task.cancelled():
                     printBox("Emergency detected. Cancelling inflation.")
                     break
@@ -172,7 +181,7 @@ class Pressure:
 
         try:
             while True:
-                current_bar = pressure.pressure_data
+                current_bar = status.pressure_data
                 if emerg_flag == 1 or task.cancelled():
                     printBox("Emergency detected. Cancelling inflation.")
                     break
@@ -225,11 +234,11 @@ async def hold_pressure(max_pressure, reset_pressure, pressure_time):
     start_time = time.time()
     try:
         while time.time() - start_time < pressure_time:
-            current_bar = pressure.pressure_data
+            current_bar = status.pressure_data
             printBox(f"🔍 Current BAR: {current_bar:.2f}")
             if current_bar < reset_pressure:
                 printBox(f"⚠️ Pressure dropped to {current_bar:.2f} — re-inflating to {max_pressure:.2f}")
-                await Pressure.inflateToBar(max_pressure, pressure.pressure_data)
+                await Pressure.inflateToBar(max_pressure, status.pressure_data)
             await asyncio.sleep(0.5)
         printBox("hold pressure time reached.")
     except asyncio.CancelledError:

@@ -4,10 +4,11 @@ import RPi.GPIO as GPIO
 import serial
 import time
 import json
-import pressure
+import status
 from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER
 from gpiozero import Button
 from drum_position_editor import positions  # for cam_hold_time 
+from web_server import update_pressure_history
 
 ser = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=2)
 ser.baudrate = SERIAL_BAUDRATE
@@ -71,11 +72,17 @@ def getCurrentBar():
 
 def pressure_updater():
     while True:
-        pressure.pressure_data = getCurrentBar()
+        status.pressure_data = getCurrentBar()
         if WEB_SERVER:
             try:
+                update_pressure_history(status.pressure_data)
                 with open("/tmp/pressure_log.json","w") as f:
-                    json.dump({"pressure": pressure.pressure_data}, f)
+                    json.dump({"pressure": status.pressure_data,
+                            "program": status.current_program_data,
+                            "stage": status.current_stage_data,
+                            "cycle": status.current_cycle_data,
+                            "action": status.current_action
+                    }, f)
             except Exception as e: 
                 print(f"Error writing pressure: {e}")
         time.sleep(0.1)

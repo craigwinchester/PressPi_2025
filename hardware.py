@@ -79,7 +79,9 @@ def pressure_updater():
                 with open("/tmp/pressure_log.json","w") as f:
                     json.dump({"pressure": status.pressure_data,
                             "program": status.current_program_data,
+                            "totalStage": status.total_stage_data,
                             "stage": status.current_stage_data,
+                            "totalCycle": status.total_cycle_data,
                             "cycle": status.current_cycle_data,
                             "action": status.current_action
                     }, f)
@@ -87,6 +89,14 @@ def pressure_updater():
                 print(f"Error writing pressure: {e}")
         time.sleep(0.1)
 
-def update_json_pressure_log(pressure):
-    with open("/tmp/pressure_log.json","w") as f:
-        json.dump({"pressure": pressure})
+def update_json_pressure_log(pressure):  #keeps all other data intact and only updates pressure.
+    try:
+        with open("/tmp/pressure_log.json", "r") as f:
+            data = json.load(f)
+    except:
+        data = {}
+
+    data["pressure"] = pressure
+
+    with open("/tmp/pressure_log.json", "w") as f:
+        json.dump(data, f)

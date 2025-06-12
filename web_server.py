@@ -1,5 +1,6 @@
 from flask import Flask, json
 import time
+import requests
 
 app = Flask(__name__)
 
@@ -41,7 +42,9 @@ def get_json_pressure_log(retries=3):
             return {
                 "pressure": pressure_val,
                 "program": data.get("program", "N/A"),
+                "totalStage": data.get("totalStage", 0),
                 "stage": data.get("stage", 0),
+                "totalCycle": data.get("totalCycle", 0),
                 "cycle": data.get("cycle", 0),
                 "action": data.get("action", "Idle")
             }
@@ -50,7 +53,9 @@ def get_json_pressure_log(retries=3):
             return {
                 "pressure": 0.0,
                 "program": "N/A",
+                "totalStage": 0,
                 "stage": 0,
+                "totalCycle": 0,
                 "cycle": 0,
                 "action": "Idle"
             }
@@ -73,24 +78,27 @@ def index():
     return f"""
     <html>
         <head>
+            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
             <title>Wine Press</title>
-            <link rel="icon" href="/static/wine-press.ico" type="image/x-icon">
-            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <link rel=\"icon\" href=\"/static/wine-press.ico\" type=\"image/x-icon\">
+            <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
             <style>
                 body {{
                     font-family: sans-serif;
-                    max-width: 700px;
-                    margin: 20px auto;
+                    margin: 10px;
                     padding: 10px;
                     background-color: #f7f7f7;
                 }}
                 h1 {{
                     font-size: 1.5em;
                     margin-bottom: 10px;
+                    text-align: center;
                 }}
-                p {{
-                    margin: 6px 0;
-                    font-size: 1em;
+                .status-section {{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 6px;
+                    margin-bottom: 20px;
                 }}
                 .status-label {{
                     font-weight: bold;
@@ -99,26 +107,34 @@ def index():
                     transition: background-color 0.3s ease;
                     padding: 2px 4px;
                     border-radius: 4px;
+                    display: inline-block;
                 }}
                 .flash {{
                     background-color: #d2eaf1;
                 }}
                 #chart-container {{
-                    height: 300px;
-                    margin-top: 20px;
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto;
+                }}
+                canvas {{
+                    width: 100% !important;
+                    height: auto !important;
                 }}
             </style>
         </head>
         <body>
             <h1>🍷 Wine Press Status</h1>
-            <p><span class="status-label">Current Pressure:</span> <span id="pressure" class="status-value">{status['pressure']:.2f}</span> BAR</p>
-            <p><span class="status-label">Program:</span> <span id="program" class="status-value">{status['program']}</span></p>
-            <p><span class="status-label">Stage:</span> <span id="stage" class="status-value">{status['stage']}</span></p>
-            <p><span class="status-label">Cycle:</span> <span id="cycle" class="status-value">{status['cycle']}</span></p>
-            <p><span class="status-label">Action:</span> <span id="action" class="status-value">{status['action']}</span></p>
+            <div class=\"status-section\">
+                <p><span class=\"status-label\">Current Pressure:</span> <span id=\"pressure\" class=\"status-value\">{status['pressure']:.2f}</span> BAR</p>
+                <p><span class=\"status-label\">Program:</span> <span id=\"program\" class=\"status-value\">{status['program']}</span></p>
+                <p><span class=\"status-label\">Stage:</span> <span id=\"stage\" class=\"status-value\"></span></p>
+                <p><span class=\"status-label\">Cycle:</span> <span id=\"cycle\" class=\"status-value\"></span></p>
+                <p><span class=\"status-label\">Action:</span> <span id=\"action\" class=\"status-value\">{status['action']}</span></p>
+            </div>
 
-            <div id="chart-container">
-                <canvas id="pressureChart"></canvas>
+            <div id=\"chart-container\">
+                <canvas id=\"pressureChart\"></canvas>
             </div>
 
             <script>
@@ -126,13 +142,13 @@ def index():
                     const res = await fetch('/pressure-data');
                     const data = await res.json();
                     return {{
-                        labels: data.map(pt => new Date(pt.time * 1000).toLocaleTimeString()),
-                        datasets: [{{
-                            label: 'Pressure (BAR)',
-                            data: data.map(pt => pt.pressure),
-                            fill: false,
-                            borderColor: 'blue',
-                            tension: 0.3
+                        "labels": data.map(pt => new Date(pt.time * 1000).toLocaleTimeString()),
+                        "datasets": [{{
+                            "label": "Pressure (BAR)",
+                            "data": data.map(pt => pt.pressure),
+                            "fill": false,
+                            "borderColor": "blue",
+                            "tension": 0.3
                         }}]
                     }};
                 }}
@@ -146,19 +162,16 @@ def index():
                         options: {{
                             animation: false,
                             responsive: true,
+                            maintainAspectRatio: false,
                             scales: {{
                                 y: {{
                                     min: 0,
                                     max: 2,
-                                    ticks: {{
-                                        stepSize: 0.2
-                                    }}
+                                    ticks: {{ stepSize: 0.2 }}
                                 }}
                             }},
                             plugins: {{
-                                legend: {{
-                                    display: false
-                                }}
+                                legend: {{ display: false }}
                             }}
                         }}
                     }});
@@ -168,11 +181,10 @@ def index():
                     try {{
                         const res = await fetch('/status');
                         const data = await res.json();
-
                         updateField("pressure", data.pressure.toFixed(2));
                         updateField("program", data.program);
-                        updateField("stage", data.stage);
-                        updateField("cycle", data.cycle);
+                        updateField("stage", `${{data.stage}} of ${{data.totalStage}}`);
+                        updateField("cycle", `${{data.cycle}} of ${{data.totalCycle}}`);
                         updateField("action", data.action);
                     }} catch (err) {{
                         console.error("❌ Failed to update status:", err);

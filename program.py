@@ -31,10 +31,13 @@ async def run_program(name, program_data):
     
     status.current_action = "Spinning to Drain location" 
     await spin_to_location(drainTime, "drain") 
-        
+
+    status.total_stage_data = len(program_data)
+
     for stage_len in range(len(program_data)):
         printBox(f"STAGE - {stage_len + 1}")
         status.current_stage_data = stage_len + 1
+        status.total_cycle_data = program_data[stage_len]["cycles"]   
         for cycle_len in range(program_data[stage_len]["cycles"]):
             printBox(f"----Cycle: {cycle_len + 1} - ")
             status.current_cycle_data = cycle_len + 1

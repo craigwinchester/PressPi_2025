@@ -2,7 +2,8 @@
 
 import json
 import tkinter as tk
-from tkinter import Toplevel, Label, Entry, Button as TkButton
+from tkinter import Toplevel, Label, Button as TkButton
+from tkinter.ttk import Spinbox  # Modern Spinbox
 from config import POSITIONS_FILE_PATH
 
 positions = {}
@@ -35,10 +36,20 @@ def open_positions_editor(root):
 
     def create_field(label_text, var_name, row):
         Label(editor, text=label_text).grid(row=row, column=0, padx=10, pady=5)
-        entry = Entry(editor)
-        entry.insert(0, str(positions["drum_positions"].get(var_name, "") if var_name != "cam_hold_time" else positions.get("cam_hold_time", 1.0)))
-        entry.grid(row=row, column=1, padx=10)
-        return entry
+
+        default_value = (
+            positions["drum_positions"].get(var_name, "")
+            if var_name != "cam_hold_time"
+            else positions.get("cam_hold_time", 1.0)
+        )
+
+        spinbox = Spinbox(
+            editor, from_=0.0, to=60.0, increment=0.1,
+            format="%.1f", width=10
+        )
+        spinbox.set(default_value)
+        spinbox.grid(row=row, column=1, padx=10)
+        return spinbox
 
     fill_entry = create_field("Fill Position (sec)", "fill_position_seconds", 0)
     drain_entry = create_field("Drain Position (sec)", "drain_position_seconds", 1)

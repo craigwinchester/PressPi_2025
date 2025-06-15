@@ -157,10 +157,12 @@ class Pressure:
                 if current_bar >= target_bar:
                     break
                 for pin in PIN_INFLATE:
+                    status.current_action = (f"Inflating to: {target_bar}")
                     GPIO.output(pin, GPIO.LOW)
                 await asyncio.sleep(1)
         finally:
             for pin in PIN_INFLATE:
+                status.current_action = ""
                 GPIO.output(pin, GPIO.HIGH)
             pressure_flag = 0
             running_tasks.discard(task)
@@ -188,6 +190,7 @@ class Pressure:
                 if current_bar <= target_bar:
                     break
                 for pin in PIN_DEFLATE:
+                    status.current_action = (f"Deflating to: {target_bar}")
                     GPIO.output(pin, GPIO.LOW)
                 await asyncio.sleep(1)
         finally:
@@ -202,6 +205,7 @@ class Pressure:
 
 async def spin_to_location(loc, label):
     printBox(f"spin_to_location - {label}, time: {loc}")
+    status.current_action = (f"Rotating to: {label}")
     global spinning_flag, pressure_flag, program_flag
     
     spinning_flag = 1
@@ -220,6 +224,7 @@ async def spin_to_location(loc, label):
     running_tasks.add(task)
     try:
         await asyncio.sleep(loc)
+        status.current_action = ""
     except asyncio.CancelledError:
         printBox(f"spin_to_location ({label}) cancelled")
     finally:

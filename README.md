@@ -4,6 +4,8 @@ PressPi is a Python-based automation system designed to control a pneumatic wine
 
 What started as a pandemic side project to pass the time has recently been completely rewritten, with a help from ChatGPT. I’ll admit it: I’m not a programmer... I’m a winemaker.
 
+old version here: https://github.com/craigwinchester/raspberry-pi-wine-press
+
 I haven’t connected the system to the actual wine press yet — but that’s coming soon. If you’re reading this and have experience with motor controllers and wiring, get in touch. I could use some help in that department. Will pay in wine!
 
 ---

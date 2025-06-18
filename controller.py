@@ -69,8 +69,7 @@ def connect_emergency_button(button):
 
     def on_emergency_click():
         try:
-            loop = asyncio.get_running_loop()
-            loop.create_task(emergency_stop())
+            trigger_emergency_stop()
         except RuntimeError:
             # Fallback if no event loop is running — try to start one manually
             asyncio.run(emergency_stop())
@@ -96,3 +95,12 @@ def shutdown_all_relays():
         #cleanup_gpio()
     except Exception as e:
         printBox(f"[Emergency GPIO Error] {e}")
+
+def trigger_emergency_stop():
+    import asyncio
+    try:
+        loop = asyncio.get_running_loop()
+        loop.create_task(emergency_stop())
+    except RuntimeError:
+        # Fallback for when no loop is running (not likely in GUI context, but safe)
+        asyncio.run(emergency_stop())

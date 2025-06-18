@@ -20,6 +20,7 @@ SERIAL_BAUDRATE = 9600  # or 115200 for backup_115200.hx
 # Pressure Settings
 FULL_DEFLATE = 0.001 #set to 0.001 when ready! 0.6 is good for testing
 MAX_PRESSURE = 1.8
+FAILSAFE_PRESSURE = 1.9
 
 # Spin Direction for spin_to_location & break-up rotations.
 # Left or Right?

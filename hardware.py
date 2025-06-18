@@ -5,10 +5,12 @@ import serial
 import time
 import json
 import status
-from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER
+import asyncio
+from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER, FAILSAFE_PRESSURE
 from gpiozero import Button
 from drum_position_editor import positions  # for cam_hold_time 
 from web_server import update_pressure_history
+from controller import trigger_emergency_stop
 
 ser = serial.Serial(SERIAL_PORT, SERIAL_BAUDRATE, timeout=2)
 ser.baudrate = SERIAL_BAUDRATE
@@ -61,11 +63,16 @@ def cleanup_gpio():
     GPIO.cleanup()
     print("[HARDWARE] GPIO cleanup complete")
 
+
 def getCurrentBar():
     try:
         line = ser.readline()
         decoded = line.decode('utf-8', errors='ignore').strip()
-        return float(decoded)
+        bar = float(decoded)
+        if bar >= FAILSAFE_PRESSURE:
+            print(f"[FAILSAFE] Pressure over {FAILSAFE_PRESSURE}")
+            trigger_emergency_stop()
+        return bar
     except Exception as e:
         print(f"[getCurrentBar error] {e}")
         return 0.0

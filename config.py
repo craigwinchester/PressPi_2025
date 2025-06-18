@@ -3,8 +3,6 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
-
-
 # GPIO Pin Assignments
 PIN_SPIN_LEFT = 17
 PIN_SPIN_RIGHT = 27
@@ -14,7 +12,6 @@ PIN_DEFLATE = [23, 24, 25]
 # File paths for json 
 PROGRAMS_FILE_PATH = BASE_DIR / "json_data" / "programs.json"
 POSITIONS_FILE_PATH = BASE_DIR / "json_data" / "drum_position.json"
-
 
 # Serial Configuration to Arduino & Pressure Transducer
 SERIAL_PORT = "/dev/ttyUSB0"

@@ -30,6 +30,11 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 
 ---
 
+![Wine Press GUI](static/gui_screenshot.png)
+*Above: Screenshot of main GUI
+
+---
+
 ## Hardware Requirements
 
 - An old wine press! 

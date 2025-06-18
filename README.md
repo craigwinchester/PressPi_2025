@@ -10,6 +10,13 @@ I haven’t connected the system to the actual wine press yet — but that’s c
 
 ---
 
+## ⚠️ Disclaimer
+This software is provided as-is, without any guarantees or warranties. Wine presses are powerful, high-pressure machines and can be dangerous if misused. Over-inflating the bladder, improper wiring, or failure to follow safety protocols could result in equipment damage, injury, or worse.
+
+By using this code, you acknowledge that you do so at your own risk. The author assumes no responsibility for any damage to property or personal injury that may result from using or modifying this system. Always consult a qualified electrician or technician when working with industrial machinery.
+
+---
+
 ## Features
 
 - Full GUI built with Tkinter
@@ -74,4 +81,13 @@ I haven’t connected the system to the actual wine press yet — but that’s c
 
 *Coming soon – this will show how the Pi, Arduino, sensors, and relays are all connected.*
 
+---
 
+## Getting Started
+1. Clone the repository:
+    ```bash
+    git clone https://github.com/craigwinchester/PressPi_2025.git
+    cd PressPi_2025
+2. Upload the Arduino sketch to the microcontroller.  /Transducer_Arduino/Arduino_Screen_Pressure_ADS1115.ino
+3. Make sure the Arduino is connected and recognized on /dev/ttyUSB0 (or update the port in config.py)
+4. run the GUI.  python3 main.py.  Or better yet test with Thorny on the pi first.

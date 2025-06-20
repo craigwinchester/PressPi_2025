@@ -6,7 +6,7 @@ import time
 import json
 import status
 import asyncio
-from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER, FAILSAFE_PRESSURE
+from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER, FAILSAFE_PRESSURE, PIN_BUTTON
 from gpiozero import Button
 from drum_position_editor import positions  # for cam_hold_time 
 from web_server import update_pressure_history
@@ -26,7 +26,7 @@ def setup_bump_button():
 
     cam_hold_time = positions.get("cam_hold_time", 1.0)
 
-    bump_button = Button(21, hold_time=cam_hold_time, pull_up=False)
+    bump_button = Button(PIN_BUTTON, hold_time=cam_hold_time, pull_up=False)
 
     def on_bump_start():
         print(f"🔁 Drum bump START — Rotation #{rotationCount}")

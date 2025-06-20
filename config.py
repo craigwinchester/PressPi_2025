@@ -8,6 +8,8 @@ PIN_SPIN_LEFT = 17
 PIN_SPIN_RIGHT = 27
 PIN_INFLATE = [16, 26]
 PIN_DEFLATE = [23, 24, 25]
+PIN_EXTRA = 22  #save this for future use. 
+PIN_BUTTON = 21
 
 # File paths for json 
 PROGRAMS_FILE_PATH = BASE_DIR / "json_data" / "programs.json"

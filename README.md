@@ -84,15 +84,35 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 
 ## System Diagram
 
-*Coming soon – this will show how the Pi, Arduino, sensors, and relays are all connected.*
+<details>
+<summary>Raspberry Pi to Relay Board Pin Mapping</summary>
+'''text
 
+| Raspberry Pi GPIO | Physical Pin | Relay Channel  | Function  |
+|-------------------|--------------|----------------|-----------|
+| GPIO 17           | Pin 11       | IN1            | Left Spin |
+| GPIO 27           | Pin 13       | IN2            | Right Spin|
+| GPIO 22           | Pin 15       | IN3            | EXTRA     |  
+| GPIO 23           | Pin 16       | IN4            | Deflate   |
+| GPIO 24           | Pin 18       | IN5            | Deflate   |
+| GPIO 25           | Pin 22       | IN6            | Deflate   |
+| GPIO 16           | Pin 36       | IN7            | Inflate   |
+| GPIO 26           | Pin 37       | IN8            | Inflate   |
+
+Power and Ground
+
+| Function     | Physical Pin | Description             |
+|--------------|--------------|-------------------------|
+| 5V Power     | Pin 2        | Connect to Relay VCC    |
+| Ground       | Pin 6        | Connect to Relay GND    |
+'''
+</details> 
 ---
 
 ## 🗂️ File & Directory Overview
 
 <details>
 <summary>Click to expand full file structure and descriptions</summary>
-
 ```text
 PressPi_2025/
 ├── main.py                    # Launches the full application (GUI + controller logic)

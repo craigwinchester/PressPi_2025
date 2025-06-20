@@ -85,7 +85,7 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 ## System Diagram
 
 <details>
-<summary>Click to expand full file structure and descriptions</summary>
+<summary>Raspberry Pi to Relay Pin Mapping</summary>
 
 ```text
 GPIO Pin Mapping

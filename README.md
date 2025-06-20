@@ -136,8 +136,8 @@ PressPi_2025/
 │   └── backup_115200.hex                      # Precompiled backup
 │
 └── __pycache__/               # Python bytecode cache (auto-generated)
-
-</details> ```
+```
+</details> 
 
 ---
 

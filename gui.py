@@ -292,6 +292,7 @@ bar_gauge.grid(row=4, column=0, columnspan=2, pady=20)
 clock_label = tk.Label(root, font=("ds-digital", 24, "bold"), bg="SteelBlue3")
 clock_label.place(x=620, y=340)
 
+
 text_box = ScrolledText.ScrolledText(root, background="#000000", foreground="#08ff31",
                                      wrap="word", height=8, width=42)
 text_box.grid(row=4, column=2, columnspan=2, pady=10)

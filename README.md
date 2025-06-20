@@ -84,7 +84,30 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 
 ## System Diagram
 
-*Coming soon – this will show how the Pi, Arduino, sensors, and relays are all connected.*
+<details>
+<summary>Click to expand full file structure and descriptions</summary>
+
+```text
+GPIO Pin Mapping
+| Raspberry Pi GPIO | Physical Pin | Relay Channel  | Direction |
+|-------------------|--------------|----------------|-----------|
+| GPIO 17           | Pin 11       | IN1            | LEFT      |
+| GPIO 27           | Pin 13       | IN2            | RIGHT     |
+| GPIO 22           | Pin 15       | IN3            | *extra    |
+| GPIO 23           | Pin 16       | IN4            | DEFLATE   |
+| GPIO 24           | Pin 18       | IN5            | DEFLATE   |
+| GPIO 25           | Pin 22       | IN6            | DEFLATE   |
+| GPIO 16           | Pin 36       | IN7            | INFLATE   |
+| GPIO 26           | Pin 37       | IN8            | INFLATE   |
+
+Power and Ground
+| Function     | Physical Pin | Description             |
+|--------------|--------------|-------------------------|
+| 5V Power     | Pin 2        | Connect to Relay VCC    |
+| Ground       | Pin 6        | Connect to Relay GND    |
+
+```
+</details>
 
 ---
 

@@ -117,12 +117,22 @@ GPIO Pin Mapping
 |-------------------|------------------------------------|
 | GPIO 21           | Pin 40       | side 1       
 
-Power and Ground
+Power 
 | Function     | Physical Pin | Description              |
 |--------------|--------------|--------------------------|
 | 3.3V Power   | Pin 1        | Connect to side 2 button | 
-     *optional: place a 10kΩ resistor here in line to button
+     *optional: place a 1kΩ or a 10kΩ resistor here in line to button
 
+```
+</details>
+<details>
+<summary>Arduino - ADS1115 - OLED - Pressure Transducer </summary>
+
+```text
+This gets a bit confusing...
+All these components are conected together, then the Arduino and Raspberry Pi comunicate via USB cable.
+
+Coming soon.
 
 ```
 </details>

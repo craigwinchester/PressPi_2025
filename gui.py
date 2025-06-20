@@ -256,12 +256,13 @@ Button_editor.grid(row=3, column=3, padx=25, pady=10)
 
 bar_gauge = tk.Label(root,
                      text="0.00 BAR",
-                     font=("Courier", 48, "bold"),
+                     font=("ds-digital", 52, "bold"),  # if not insatlled use ("Courier", 52, "bold")
                      bg="black",
                      fg="lime green",
                      width=10,
+                     height=1,
                      relief="ridge",
-                     bd=10, 
+                     bd=10,
                      anchor="center")
 bar_gauge.grid(row=4, column=0, columnspan=2, pady=20)
 

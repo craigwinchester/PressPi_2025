@@ -38,7 +38,7 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 ## Hardware Requirements
 
 - An old wine press! 
-        Mine is a 1993 Velo 2100 Liter. We will reuse all it's old motor starters, etc...
+        Mine is a 1993 Velo 2100 Liter. We will reuse all it's old motor starters, 12 volt transformer. etc...
 - Raspberry Pi (tested with a 4 Model B)
 - Arduino Uno or ESP32 (tested with ESP32-S3)  
     > Currently using Arduino for better stability
@@ -57,7 +57,7 @@ By using this code, you acknowledge that you do so at your own risk. The author 
     > More designs coming soon
 - Wires 
 - breadboard for testing purposes
-- a large Syringe (at least 50ml) plus small hoses to connect to the pressure transducer, for testing.
+- a large Syringe (at least 50ml) plus small hoses to connect to the pressure transducer, to simulate the wine press bladder.
 
 ---
 

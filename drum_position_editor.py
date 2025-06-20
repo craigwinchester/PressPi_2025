@@ -3,8 +3,8 @@
 import json
 import tkinter as tk
 from tkinter import Toplevel, Label, Button as TkButton
-from tkinter.ttk import Spinbox  # Modern Spinbox
-from config import POSITIONS_FILE_PATH
+from config import POSITIONS_FILE_PATH, TOUCHSCREEN_ENABLED
+from touchscreen_keypad import NumericKeypad
 
 positions = {}
 
@@ -43,13 +43,33 @@ def open_positions_editor(root):
             else positions.get("cam_hold_time", 1.0)
         )
 
-        spinbox = Spinbox(
-            editor, from_=0.0, to=60.0, increment=0.1,
+        spinbox = tk.Spinbox(
+            editor, from_=0.0, to=120.0, increment=0.1,
             format="%.1f", width=10
         )
-        spinbox.set(default_value)
+        spinbox.delete(0, tk.END)
+        spinbox.insert(0, default_value)
         spinbox.grid(row=row, column=1, padx=10)
+
+        if TOUCHSCREEN_ENABLED:
+            spinbox.bind("<Button-1>", lambda e, widget=spinbox: open_keypad(editor, widget))
+
         return spinbox
+    
+    def open_keypad(master, widget):
+        original_bg = widget.cget("background")
+        if hasattr(widget, 'configure'):
+            try:
+                widget.configure(background="yellow")
+            except tk.TclError:
+                pass
+        def restore():
+            if hasattr(widget, 'configure'):
+                try:
+                    widget.configure(background=original_bg)
+                except tk.TclError:
+                    pass
+        NumericKeypad(master, widget, on_close=restore)
 
     fill_entry = create_field("Fill Position (sec)", "fill_position_seconds", 0)
     drain_entry = create_field("Drain Position (sec)", "drain_position_seconds", 1)

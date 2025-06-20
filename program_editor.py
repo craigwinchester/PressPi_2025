@@ -4,7 +4,8 @@ import tkinter as tk
 from tkinter import messagebox
 import json
 import os
-from config import PROGRAMS_FILE_PATH
+from config import PROGRAMS_FILE_PATH, TOUCHSCREEN_ENABLED
+from touchscreen_keypad import NumericKeypad
 
 programs = []
 
@@ -66,30 +67,34 @@ def open_program_editor(root):
         for i, stage in enumerate(programs[selected_program]):
             tk.Label(editor, text=f"Stage {i+1}").grid(row=i+2, column=0)
 
-            cycles_entry = tk.Entry(editor)
-            cycles_entry.insert(0, stage.get("cycles", ""))
-            cycles_entry.grid(row=i+2, column=1)
-            cycles_entries.append(cycles_entry)
+            def create_entry(value, row, column):
+                entry = tk.Entry(editor)
+                entry.insert(0, value)
+                entry.grid(row=row, column=column)
+                if TOUCHSCREEN_ENABLED:
+                    entry.bind("<Button-1>", lambda e, widget=entry: open_keypad(editor, widget))
+                return entry
 
-            maxPressure_entry = tk.Entry(editor)
-            maxPressure_entry.insert(0, stage.get("maxPressure", ""))
-            maxPressure_entry.grid(row=i+2, column=2)
-            maxPressure_entries.append(maxPressure_entry)
+            def open_keypad(master, widget):
+                original_bg = widget.cget("background")
+                if hasattr(widget, 'configure'):
+                    try:
+                        widget.configure(background="yellow")
+                    except tk.TclError:
+                        pass
+                def restore():
+                     if hasattr(widget, 'configure'):
+                        try:
+                            widget.configure(background=original_bg)
+                        except tk.TclError:
+                            pass
+                NumericKeypad(master, widget, on_close=restore)
 
-            resetPressure_entry = tk.Entry(editor)
-            resetPressure_entry.insert(0, stage.get("resetPressure", ""))
-            resetPressure_entry.grid(row=i+2, column=3)
-            resetPressure_entries.append(resetPressure_entry)
-
-            pressureTime_entry = tk.Entry(editor)
-            pressureTime_entry.insert(0, stage.get("pressureTime", ""))
-            pressureTime_entry.grid(row=i+2, column=4)
-            pressureTime_entries.append(pressureTime_entry)
-
-            breakUpRotations_entry = tk.Entry(editor)
-            breakUpRotations_entry.insert(0, stage.get("breakUpRotations", ""))
-            breakUpRotations_entry.grid(row=i+2, column=5)
-            breakUpRotations_entries.append(breakUpRotations_entry)
+            cycles_entries.append(create_entry(stage.get("cycles", ""), i+2, 1))
+            maxPressure_entries.append(create_entry(stage.get("maxPressure", ""), i+2, 2))
+            resetPressure_entries.append(create_entry(stage.get("resetPressure", ""), i+2, 3))
+            pressureTime_entries.append(create_entry(stage.get("pressureTime", ""), i+2, 4))
+            breakUpRotations_entries.append(create_entry(stage.get("breakUpRotations", ""), i+2, 5))
 
     def add_stage():
         selected_program = get_selected_program_index()

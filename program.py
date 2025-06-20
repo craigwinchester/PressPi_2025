@@ -17,7 +17,10 @@ drainTime = positions["drum_positions"]["drain_position_seconds"]
 bottomTime = positions["drum_positions"]["door_down_position_seconds"]
 cam_hold_time = positions.get("cam_hold_time", 1.0)
 
-contacts = load_contacts()
+if SMS_MESSAGING:
+    contacts = load_contacts()
+else:
+    print("No SMS messaging")
 
 async def run_program(name, program_data):
     

@@ -14,7 +14,7 @@ import asyncio
 from asyncio import new_event_loop, set_event_loop, run_coroutine_threadsafe
 from program_editor import open_program_editor, programs
 from drum_position_editor import open_positions_editor
-from config import SERIAL_PORT, SERIAL_BAUDRATE, PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, MAX_PRESSURE
+from config import SERIAL_PORT, SERIAL_BAUDRATE, PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, MAX_PRESSURE, TOUCHSCREEN_ENABLED
 from press_logic import Spin, Pressure, spin_to_location
 from hardware import cleanup_gpio, pressure_updater
 from utils import set_text_box, set_root_window, printBox, set_control_buttons
@@ -23,6 +23,7 @@ from drum_position_editor import positions
 from program import run_program
 import status
 from web_server import shutdown_flask
+from touchscreen_keypad import NumericKeypad
  
 # --- ASYNCIO SETUP ---
 asyncio_loop = new_event_loop()
@@ -187,8 +188,24 @@ Button_bottom = tk.Button(
 )
 Button_bottom.grid(row=2, column=1, padx=25, pady=10)
 
-Entry_bar = tk.Entry(root, width=4)
+Entry_bar = tk.Spinbox(root, from_=0.0, to=MAX_PRESSURE, increment=0.1, format="%.1f", width=4)
 Entry_bar.grid(row=0, column=2)
+
+if TOUCHSCREEN_ENABLED:
+    def open_keypad(e, widget=Entry_bar):
+        original_bg = widget.cget("background")
+        try:
+            widget.configure(background="yellow")
+        except tk.TclError:
+            pass
+        def restore():
+            try:
+                widget.configure(background=original_bg)
+            except tk.TclError:
+                pass
+        NumericKeypad(root, widget, on_close=restore)
+
+    Entry_bar.bind("<Button-1>", open_keypad)
 
 Button_setToBar = tk.Button(root, text='Set To BAR', height=2, width=16, bg="light slate gray",
                              command=lambda: button_settobar())

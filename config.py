@@ -27,7 +27,10 @@ FAILSAFE_PRESSURE = 1.9
 SPIN_ROTATION = PIN_SPIN_LEFT
 
 #WEB PAGE On or Off
-WEB_SERVER = True
+WEB_SERVER = False
+
+#TouchScreen Attached?
+TOUCHSCREEN_ENABLED = True
 
 #Messaging System - text/email/Telegram? see sms_contacts.json & email_contacts.json to add recipients. ATT stopping this service in future.
 SMS_MESSAGING = False

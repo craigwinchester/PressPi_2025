@@ -108,6 +108,24 @@ Power and Ground
 
 ```
 </details>
+<details>
+<summary>Raspberry Pi to Roller Plunger Limit Switch / Button </summary>
+
+```text
+GPIO Pin Mapping
+| Raspberry Pi GPIO | Physical Pin | button/switch  
+|-------------------|------------------------------------|
+| GPIO 21           | Pin 40       | side 1       
+
+Power and Ground
+| Function     | Physical Pin | Description              |
+|--------------|--------------|--------------------------|
+| 3.3V Power   | Pin 1        | Connect to side 2 button | 
+     *optional: place a 10kΩ resistor here in line to button
+
+
+```
+</details>
 
 ---
 

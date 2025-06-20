@@ -88,6 +88,53 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 
 ---
 
+## File & Directory OverView
+PressPi_2025/
+├── main.py                    # Launches the full application (GUI + controller logic)
+├── gui.py                     # Tkinter GUI for user interaction
+├── controller.py              # Async core logic for press stage sequencing
+├── press_logic.py             # Press-specific actions (inflate, hold, rotate, etc.)
+├── config.py                  # Centralized configuration values (thresholds, ports, etc.)
+├── program.py                 # Press cycle program logic (stage definitions)
+├── program_editor.py          # GUI for creating/editing press programs
+├── drum_position_editor.py    # GUI tool for calibrating drum position timings
+├── relays_off_boot.py         # Optional script to reset all relays on boot
+├── sms_alerts.py              # Sends SMS alerts using contact list
+├── status.py                  # GUI/status bar updater module
+├── utils.py                   # Helper functions (e.g. formatting, time conversion)
+├── web_server.py              # Flask web interface (optional for remote monitoring)
+├── hardware.py                # Interfaces with GPIO pins and relay logic
+├── start_PressPi2025.sh       # Shell script to auto-start the program on boot
+├── Press_Pi_2025.desktop      # Desktop shortcut for GUI launch
+├── README.md                  # This file – project documentation
+├── .gitignore                 # Files/folders excluded from Git tracking
+│
+├── json_data/                 # Saved configuration and contact data. 
+│   ├── drum_position.json     # Time-based drum position settings
+│   ├── email_contacts.json    # Email alert list (if used)
+│   ├── programs.json          # User-defined press programs
+│   └── sms_contacts.json      # List of phone numbers for SMS alerts
+│
+├── tmp/                       # Temp folder for logging. Use by web_server
+│   ├── pressure_history.json  # Rolling pressure history log
+│   └── pressure_log.json      # Main pressure log output
+│
+├── static/                    # Icons, fonts, images
+│   ├── FONT/                  # Custom fonts (used in GUI)
+│   ├── wine-press.ico         # Application icon
+│   └── wine-press.png         # GUI/README image
+│
+├── Transducer_Arduino/        # Arduino sketches for pressure sensing
+│   ├── Transducer.ino                         # Basic serial pressure output
+│   ├── Ardunio_Screen_Pressure.ino            # OLED + pressure
+│   ├── Ardunio_Screen_Pressure_ADS1115.ino    # OLED + ADS1115 version
+│   └── backup_115200.hex                      # Precompiled backup
+│
+├── __pycache__/               # Python bytecode cache (auto-generated)
+
+
+---
+
 ## Getting Started
 1. Clone the repository:
     ```bash

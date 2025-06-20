@@ -88,9 +88,11 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 
 ---
 
-## File & Directory OverView
-<details> 
+## 🗂️ File & Directory Overview
+
+<details>
 <summary>Click to expand full file structure and descriptions</summary>
+
 ```text
 PressPi_2025/
 ├── main.py                    # Launches the full application (GUI + controller logic)
@@ -112,13 +114,13 @@ PressPi_2025/
 ├── README.md                  # This file – project documentation
 ├── .gitignore                 # Files/folders excluded from Git tracking
 │
-├── json_data/                 # Saved configuration and contact data. 
+├── json_data/                 # Saved configuration and contact data
 │   ├── drum_position.json     # Time-based drum position settings
 │   ├── email_contacts.json    # Email alert list (if used)
 │   ├── programs.json          # User-defined press programs
 │   └── sms_contacts.json      # List of phone numbers for SMS alerts
 │
-├── tmp/                       # Temp folder for logging. Use by web_server
+├── tmp/                       # Temp folder for logging
 │   ├── pressure_history.json  # Rolling pressure history log
 │   └── pressure_log.json      # Main pressure log output
 │
@@ -133,7 +135,8 @@ PressPi_2025/
 │   ├── Ardunio_Screen_Pressure_ADS1115.ino    # OLED + ADS1115 version
 │   └── backup_115200.hex                      # Precompiled backup
 │
-├── __pycache__/               # Python bytecode cache (auto-generated)
+└── __pycache__/               # Python bytecode cache (auto-generated)
+
 </details> ```
 
 ---

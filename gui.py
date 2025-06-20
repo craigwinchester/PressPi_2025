@@ -24,6 +24,7 @@ from program import run_program
 import status
 from web_server import shutdown_flask
 from touchscreen_keypad import NumericKeypad
+import time
  
 # --- ASYNCIO SETUP ---
 asyncio_loop = new_event_loop()
@@ -143,6 +144,11 @@ def button_settobar():
         run_async_task(lambda: inflate_to_bar(target, lambda: status.pressure_data))
     except ValueError:
         printBox("❌ Invalid BAR entry.")
+
+def update_clock():
+    current_time = time.strftime("%H:%M:%S")
+    clock_label.config(text=current_time)
+    root.after(1000, update_clock)
 
 
 root = tk.Tk()
@@ -283,6 +289,9 @@ bar_gauge = tk.Label(root,
                      anchor="center")
 bar_gauge.grid(row=4, column=0, columnspan=2, pady=20)
 
+clock_label = tk.Label(root, font=("ds-digital", 24, "bold"), bg="SteelBlue3")
+clock_label.place(x=620, y=340)
+
 text_box = ScrolledText.ScrolledText(root, background="#000000", foreground="#08ff31",
                                      wrap="word", height=8, width=42)
 text_box.grid(row=4, column=2, columnspan=2, pady=10)
@@ -334,6 +343,8 @@ def start_main_gui_logic():
     print("starting main gui logic")
     ani = animation.FuncAnimation(fig, animate, interval=250, blit=True)
     update_gauge()
+
+update_clock()
 
 root.after(100, start_main_gui_logic)
 root.after(200, button_color_poll_loop)

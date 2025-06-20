@@ -89,6 +89,7 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 ---
 
 ## File & Directory OverView
+<details> <summary>Click to expand full file structure and descriptions</summary>
 PressPi_2025/
 ├── main.py                    # Launches the full application (GUI + controller logic)
 ├── gui.py                     # Tkinter GUI for user interaction
@@ -131,7 +132,7 @@ PressPi_2025/
 │   └── backup_115200.hex                      # Precompiled backup
 │
 ├── __pycache__/               # Python bytecode cache (auto-generated)
-
+</details>
 
 ---
 

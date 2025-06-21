@@ -90,26 +90,28 @@ void loop() {
   display.print(bar, 2);
   display.print(" BAR");
 
-  // === Bubble animation (bottom 24px) ===
-  const int maxBubbles = 12;
+  // === Bubble animation  ===
+  const int maxBubbles = 20;
   int numBubbles = map(psi, 0, psiMax, 1, maxBubbles);
 
   static int bubbleY[maxBubbles];
   static int bubbleX[maxBubbles];
   static bool bubblesInit = false;
 
+  const int bubbleStartY = 18;  // Start falling from just below the bar graph
+
   if (!bubblesInit) {
     for (int i = 0; i < maxBubbles; i++) {
       bubbleX[i] = random(0, SCREEN_WIDTH);
-      bubbleY[i] = SCREEN_HEIGHT - random(8);
+      bubbleY[i] = random(bubbleStartY, SCREEN_HEIGHT);
     }
     bubblesInit = true;
   }
 
   for (int i = 0; i < numBubbles; i++) {
-    bubbleY[i] -= 1;
-    if (bubbleY[i] < 40) {
-      bubbleY[i] = SCREEN_HEIGHT - 1;
+    bubbleY[i] += 1;  // Move down
+    if (bubbleY[i] > SCREEN_HEIGHT - 1) {
+      bubbleY[i] = bubbleStartY;
       bubbleX[i] = random(0, SCREEN_WIDTH);
     }
     display.drawCircle(bubbleX[i], bubbleY[i], 2, SSD1306_WHITE);

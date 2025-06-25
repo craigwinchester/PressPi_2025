@@ -15,7 +15,7 @@ for pin in relay_pins:
 time.sleep(0.5)
 
 # Log confirmation
-with open("/home/craig/Documents/CODE/Raspberry_Pi_Wine_Press/relay_log.txt", "a") as log:  #change directory as needed
+with open("/home/craig/Documents/CODE/Press_Pi_2025/tmp/relay_log.txt", "a") as log:  #change directory as needed
     log.write(f"[{datetime.now()}] Relays set to OFF\n")
 
 GPIO.cleanup()  

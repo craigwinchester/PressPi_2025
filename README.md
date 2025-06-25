@@ -40,11 +40,10 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 - An old wine press! 
         Mine is a 1993 Velo 2100 Liter. We will reuse all it's old motor starters, 12 volt transformer. etc...
 - Raspberry Pi (tested with a 4 Model B)
-- Arduino Uno or ESP32 (tested with ESP32-S3)  
-    > Currently using Arduino for better stability
+- Arduino Uno 
 - ADS1115 analog-to-digital converter
 - Pressure transducer (0–30 PSI)  
-    > 3-wire, 1/8" NPT  
+    > 5 volt, 3-wire, 1/8" NPT
     > Add 0.1 µF and 10 µF ceramic capacitors to filter noise  
     > Use push-connect pneumatic fittings (6mm)
 - Relay board (to control valves, pump, etc. 8 channel)
@@ -132,6 +131,8 @@ Power
 This gets a bit confusing...
 All these components are conected together, then the Arduino and Raspberry Pi comunicate via USB cable.
 
+Pressure Transducer - Wiring: Red for +5V; Black for ground; Green for signal output.
+
 Coming soon.
 
 ```
@@ -198,5 +199,10 @@ PressPi_2025/
     git clone https://github.com/craigwinchester/PressPi_2025.git
     cd PressPi_2025
 2. Upload the Arduino sketch to the microcontroller.  /Transducer_Arduino/Arduino_Screen_Pressure_ADS1115.ino
-3. Make sure the Arduino is connected and recognized on /dev/ttyUSB0 (or update the port in config.py)
-4. run the GUI.  python3 main.py.  Or better yet test with Thorny on the pi first.
+3. optional: add relays_off_boot.py to crontab.  Turns off all relays at boot. just a saftey precaution.
+    you will need to edit the file first to change the logging pathway.
+    '''bash
+    crontab -e 
+    @reboot /your/pathway/here/relays_off_boot.py &    
+4. Make sure the Arduino is connected via USB and recognized on /dev/ttyUSB0 (or update the port in config.py)
+5. run the GUI.  python3 main.py.  Or better yet test with Thorny on the pi first.

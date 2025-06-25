@@ -1,8 +1,0 @@
-{
-  "drum_positions": {
-    "fill_position_seconds": 5,
-    "drain_position_seconds": 1,
-    "door_down_position_seconds": 10
-  },
-  "cam_hold_time": 1.0
-}

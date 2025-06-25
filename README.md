@@ -82,7 +82,7 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 ---
 
 ## System Diagram
-<h2 align="center">📌 Wiring of Components</h2>
+<h2 align="center">Wiring of Components</h2>
 
 <div align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
 

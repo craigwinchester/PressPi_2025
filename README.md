@@ -82,10 +82,32 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 ---
 
 ## System Diagram
-Wiring of components. 
-[![Click to enlarge](static/Pi_Relay_fritzing_THUMB.png)](static/Pi_Relay_fritzing.png)
-[![Click to enlarge](static/Pi_ButtonSwitch_fritzing_THUMB.png)](static/Pi_ButtonSwitch_fritzing.png)
-[![Click to enlarge](static/Arduino_OLED_ADS_Pressure_fritzing_THUMB.png)](static/Arduino_OLED_ADS_Pressure_fritzing.png)
+<h2 align="center">📌 Wiring of Components</h2>
+
+<div align="center" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+
+  <figure style="text-align: center;">
+    <a href="static/Pi_Relay_fritzing.png" target="_blank">
+      <img src="static/Pi_Relay_fritzing_THUMB.png" width="300" alt="Pi to Relay Wiring">
+    </a>
+    <figcaption>🧲 Pi to Relay</figcaption>
+  </figure>
+
+  <figure style="text-align: center;">
+    <a href="static/Pi_ButtonSwitch_fritzing.png" target="_blank">
+      <img src="static/Pi_ButtonSwitch_fritzing_THUMB.png" width="300" alt="Pi to Button Switch Wiring">
+    </a>
+    <figcaption>🔘 Pi to Switch</figcaption>
+  </figure>
+
+  <figure style="text-align: center;">
+    <a href="static/Arduino_OLED_ADS_Pressure_fritzing.png" target="_blank">
+      <img src="static/Arduino_OLED_ADS_Pressure_fritzing_THUMB.png" width="300" alt="Arduino OLED Pressure Sensor Wiring">
+    </a>
+    <figcaption>📟 Arduino: OLED + Pressure Sensor</figcaption>
+  </figure>
+
+</div>
 <details>
 <summary>Raspberry Pi to Relay Pin Mapping</summary>
 

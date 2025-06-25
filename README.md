@@ -110,7 +110,7 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 
 ```text
 GPIO Pin Mapping
-| Raspberry Pi GPIO | Physical Pin | Relay Channel  | Direction |
+| Raspberry Pi GPIO | Physical Pin | Relay Channel  | Function  |
 |-------------------|--------------|----------------|-----------|
 | GPIO 17           | Pin 11       | IN1            | LEFT      |
 | GPIO 27           | Pin 13       | IN2            | RIGHT     |
@@ -221,8 +221,7 @@ PressPi_2025/
     git clone https://github.com/craigwinchester/PressPi_2025.git
     cd PressPi_2025
 2. Upload the Arduino sketch to the microcontroller.  /Transducer_Arduino/Arduino_Screen_Pressure_ADS1115.ino
-3. optional: add relays_off_boot.py to crontab.  Turns off all relays at boot. just a saftey precaution.
-    you will need to edit the file first to change the logging pathway.
+3. optional: add relays_off_boot.py to crontab.  Turns off all relays at boot. just a saftey precaution. You will need to edit the file first to change the logging pathway.
     '''bash
     crontab -e 
     @reboot /your/pathway/here/relays_off_boot.py &    

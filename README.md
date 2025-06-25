@@ -90,21 +90,18 @@ By using this code, you acknowledge that you do so at your own risk. The author 
     <a href="static/Pi_Relay_fritzing.png" target="_blank">
       <img src="static/Pi_Relay_fritzing_THUMB.png" width="200" alt="Pi to Relay Wiring">
     </a>
-    <figcaption>Pi to Relay</figcaption>
   </figure>
 
   <figure style="text-align: center;">
     <a href="static/Pi_ButtonSwitch_fritzing.png" target="_blank">
       <img src="static/Pi_ButtonSwitch_fritzing_THUMB.png" width="200" alt="Pi to Button Switch Wiring">
     </a>
-    <figcaption>Pi to Switch</figcaption>
   </figure>
 
   <figure style="text-align: center;">
     <a href="static/Arduino_OLED_ADS_Pressure_fritzing.png" target="_blank">
       <img src="static/Arduino_OLED_ADS_Pressure_fritzing_THUMB.png" width="200" alt="Arduino OLED Pressure Sensor Wiring">
     </a>
-    <figcaption>Arduino: OLED + Pressure Sensor</figcaption>
   </figure>
 
 </div>

@@ -83,6 +83,9 @@ By using this code, you acknowledge that you do so at your own risk. The author 
 
 ## System Diagram
 Wiring of components. 
+[![Click to enlarge](static/Pi_Relay_fritzing.png)](static/Pi_Relay_fritzing.png)
+[![Click to enlarge](static/Pi_ButtonSwitch_fritzing.png)](static/Pi_ButtonSwitch_fritzing.png)
+[![Click to enlarge](static/Arduino_OLED_ADS_Pressure_fritzing.png)](static/Arduino_OLED_ADS_Pressure_fritzing.png)
 <details>
 <summary>Raspberry Pi to Relay Pin Mapping</summary>
 
@@ -107,8 +110,6 @@ Power and Ground
 
 ```
 </details>
-[![Click to enlarge](static/Pi_Relay_fritzing.png)](static/Pi_Relay_fritzing.png)
-
 <details>
 <summary>Raspberry Pi to Roller Plunger Limit Switch / Button </summary>
 

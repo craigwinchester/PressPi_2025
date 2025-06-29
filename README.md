@@ -150,12 +150,26 @@ Power
 <summary>Arduino - ADS1115 - OLED - Pressure Transducer </summary>
 
 ```text
-This gets a bit confusing...
-All these components are conected together, then the Arduino and Raspberry Pi comunicate via USB cable.
+This gets a bit confusing... hopefully I get this correct!
+See above image.
 
 Pressure Transducer - Wiring: Red for +5V; Black for ground; Green for signal output.
+    Red to both Capacitors(side 1) then ADS1115 VDD
+    Black to both Capacitors(side 2) then ADS1115 Ground
+    Green to ADS1115 A0
 
-Coming soon.
+OLED 0.96 inch 128x64
+    SCL to ADS1115 SCL & ARDUINO SCL
+    SDA to ASD1115 SDA & ARDUNIO SDA
+    VCC to ARDUINO VIN
+    Ground to ARDUINO Ground or shared ground on breadboard. My Arduino has 2 grounds
+
+ARDUINO
+    USB to Raspberry Pi USB
+    A4 to ADS1115 SDA
+    A5 to ADS1115 SCL
+    Ground to Pressure Transducer Ground & ADS1115 Ground
+    5V to ADS VDD
 
 ```
 </details>

@@ -6,7 +6,7 @@ import time
 import json
 import status
 import asyncio
-from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER, FAILSAFE_PRESSURE, PIN_BUTTON
+from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SERIAL_PORT, SERIAL_BAUDRATE, WEB_SERVER, FAILSAFE_PRESSURE, PIN_BUTTON, PIN_COMPRESSOR, PIN_EXTERNAL_COMPRESSOR
 from gpiozero import Button
 from drum_position_editor import positions  # for cam_hold_time 
 from web_server import update_pressure_history
@@ -48,7 +48,7 @@ def setup_gpio():
     GPIO.setwarnings(False)
 
     # Combine all pins to one list
-    all_pins = [PIN_SPIN_LEFT, PIN_SPIN_RIGHT] + PIN_INFLATE + PIN_DEFLATE
+    all_pins = [PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_COMPRESSOR, PIN_EXTERNAL_COMPRESSOR] + PIN_INFLATE + PIN_DEFLATE
 
     # Initialize each as output and set HIGH to keep relays off (or LOW depending on relay type)
     for pin in all_pins:

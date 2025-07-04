@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 #import threading
 from hardware import setup_gpio
 import hardware
-from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SPIN_ROTATION
+from config import PIN_SPIN_LEFT, PIN_SPIN_RIGHT, PIN_INFLATE, PIN_DEFLATE, SPIN_ROTATION, PIN_COMPRESSOR, PIN_EXTERNAL_COMPRESSOR, ONBOARD_COMPRESSOR
 from utils import printBox
 from controller import running_tasks
 import status
@@ -86,6 +86,8 @@ class Pressure:
                     pressure_flag = 1
                     printBox("Pressure On")
                     status.current_action = "Inflating" 
+                    if ONBOARD_COMPRESSOR:
+                        GPIO.output(PIN_COMPRESSOR, GPIO.LOW)
                     for pin in PIN_INFLATE:
                         GPIO.output(pin, GPIO.LOW)
                     for pin in PIN_DEFLATE:
@@ -96,6 +98,8 @@ class Pressure:
                     pressure_flag = 0
                     printBox("Pressure Off")
                     status.current_action = ""
+                    if ONBOARD_COMPRESSOR:
+                        GPIO.output(PIN_COMPRESSOR, GPIO.HIGH)
                     for pin in PIN_INFLATE:
                         GPIO.output(pin, GPIO.HIGH)
             else:
@@ -104,6 +108,8 @@ class Pressure:
             pressure_flag = 0
             for pin in PIN_INFLATE:
                 GPIO.output(pin, GPIO.HIGH)
+            if ONBOARD_COMPRESSOR:
+                GPIO.output(PIN_COMPRESSOR, GPIO.HIGH)
             running_tasks.discard(task)
             #printBox("Inflate task cleaned up")
 
@@ -117,6 +123,9 @@ class Pressure:
                     pressure_flag = 2
                     printBox("Vacuum On")
                     status.current_action = "Deflating"
+
+                    GPIO.output(PIN_COMPRESSOR, GPIO.LOW)
+
                     for pin in PIN_INFLATE:
                         GPIO.output(pin, GPIO.HIGH)
                     for pin in PIN_DEFLATE:
@@ -127,6 +136,9 @@ class Pressure:
                     pressure_flag = 0
                     printBox("Vacuum Off")
                     status.current_action = ""
+
+                    GPIO.output(PIN_COMPRESSOR, GPIO.HIGH)
+
                     for pin in PIN_DEFLATE:
                         GPIO.output(pin, GPIO.HIGH)
             else:
@@ -135,6 +147,7 @@ class Pressure:
             pressure_flag = 0
             for pin in PIN_DEFLATE:
                 GPIO.output(pin, GPIO.HIGH)
+            GPIO.output(PIN_COMPRESSOR, GPIO.HIGH)
             running_tasks.discard(task)
             #printBox("Deflate task cleaned up")
 
@@ -159,11 +172,15 @@ class Pressure:
                 for pin in PIN_INFLATE:
                     status.current_action = (f"Inflating to: {target_bar}")
                     GPIO.output(pin, GPIO.LOW)
+                if ONBOARD_COMPRESSOR:
+                    GPIO.output(PIN_COMPRESSOR, GPIO.LOW)
                 await asyncio.sleep(1)
         finally:
             for pin in PIN_INFLATE:
                 status.current_action = ""
                 GPIO.output(pin, GPIO.HIGH)
+            if ONBOARD_COMPRESSOR:
+                GPIO.output(PIN_COMPRESSOR, GPIO.HIGH)
             pressure_flag = 0
             running_tasks.discard(task)
         if emerg_flag == 1 or task.cancelled():
@@ -192,10 +209,12 @@ class Pressure:
                 for pin in PIN_DEFLATE:
                     status.current_action = (f"Deflating to: {target_bar}")
                     GPIO.output(pin, GPIO.LOW)
+                GPIO.output(PIN_COMPRESSOR, GPIO.LOW)
                 await asyncio.sleep(1)
         finally:
             for pin in PIN_DEFLATE:
                 GPIO.output(pin, GPIO.HIGH)
+            GPIO.output(PIN_COMPRESSOR, GPIO.HIGH)
             pressure_flag = 0
             running_tasks.discard(task)
         if emerg_flag == 1 or task.cancelled():

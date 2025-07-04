@@ -3,12 +3,16 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 
+# ONBOARD COMPRESSOR?
+ONBOARD_COMPRESSOR = False
+
 # GPIO Pin Assignments
 PIN_SPIN_LEFT = 17
 PIN_SPIN_RIGHT = 27
 PIN_INFLATE = [16, 26]
-PIN_DEFLATE = [23, 24, 25]
-PIN_EXTRA = 22  #save this for future use. 
+PIN_DEFLATE = [24, 25]
+PIN_COMPRESSOR = 23
+PIN_EXTERNAL_COMPRESSOR = 22  #will use if adding secondary Solenoid from external air compressor.
 PIN_BUTTON = 21
 
 # File paths for json 

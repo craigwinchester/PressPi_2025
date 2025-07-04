@@ -25,20 +25,6 @@ def set_text_box(widget):
 def printBox(msg):
     print_queue.put(msg)
 
-def disable_all_buttons():
-    for btn in all_control_buttons:
-        try:
-            btn.config(state=tk.DISABLED, fg="gray")
-        except Exception:
-            pass
-
-def enable_all_buttons():
-    for btn in all_control_buttons:
-        try:
-            btn.config(state=tk.NORMAL, fg="black")
-        except Exception:
-            pass
-
 def _process_print_queue():
     try:
         while not print_queue.empty():

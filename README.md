@@ -56,7 +56,7 @@ By using this code, you acknowledge that you do so at your own risk. The author 
     > More designs coming soon
 - Wires 
 - breadboard for testing purposes
-- a large Syringe (at least 50ml) plus small hoses to connect to the pressure transducer, to simulate the wine press bladder.
+- a large Syringe (at least 50ml) plus small hoses to connect to the pressure transducer, to simulate the wine press bladder for testing.
 
 ---
 
